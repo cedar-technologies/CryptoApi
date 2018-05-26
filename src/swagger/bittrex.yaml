@@ -1,0 +1,565 @@
+openapi: 3.0.0
+info:
+  description: Bittrex provides a simple and powerful REST API to allow you to programatically perform nearly all actions you can from our web interface. All requests use the application/json content type and go over https. The base url is https://bittrex.com/api/{version}/. All requests are GET requests and all responses come in a default response object with the result in the result field. Always check the success flag to ensure that your API call succeeded.
+  version: "1.0.0"
+  title: Bittrex API
+  contact:
+    email: alexandre.jx@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: https://bittrex.com/api/v1.1    
+tags:
+  - name: Public
+    description: Public information available without an API key
+  - name: Market
+    description: For programmatic trading of crypto currencies
+  - name: Account
+    description: For managing your account
+paths:
+  /public/getmarkets:
+    get:
+      tags:
+        - Public
+      summary: Market Meta Data
+      operationId: getMarkets
+      description: |
+        Used to get the open and available trading markets at Bittrex along with other meta data.
+      responses:
+        '200':
+          description: Markets data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/markets'
+  /public/getcurrencies:
+    get:
+      tags:
+        - Public
+      summary: Currency Meta Data
+      operationId: getCurrencies
+      description: |
+        Used to get all supported currencies at Bittrex along with other meta data.
+      responses:
+        '200':
+          description: Currencies data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/currencies'
+  /public/getticker:
+    get:
+      tags:
+        - Public
+      summary: Get Ticker
+      operationId: getTicker
+      description: |
+        Used to get the current tick values for a market.
+      parameters:
+        - $ref: "#/components/parameters/market"
+      responses:
+        '200':
+          description: ticker data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tickerDetail'
+  /public/getmarketsummaries:
+    get:
+      tags:
+        - Public
+      summary: Get Market Summary
+      operationId: getMarketSummaries
+      description: |
+        Used to get the last 24 hour summary of all active markets
+      responses:
+        '200':
+          description: market summaries data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketSummaries'
+  /public/getmarketsummary:
+    get:
+      tags:
+        - Public
+      summary: Get Market Summary
+      operationId: getMarketSummary
+      description: |
+        Used to get the last 24 hour summary of a specific market.
+      parameters:
+        - $ref: "#/components/parameters/market"
+      responses:
+        '200':
+          description: market summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketSummaryDetail'
+  /public/getorderbook:
+    get:
+      tags:
+        - Public
+      summary: Get Order Book
+      operationId: getOrderBook
+      description: |
+        Used to get retrieve the orderbook for a given market.
+      parameters:
+        - $ref: "#/components/parameters/market"
+        - in: query
+          name: type
+          description: buy, sell or both to identify the type of orderbook to return
+          schema:
+            type: string
+            enum: [buy, sell, both]
+      responses:
+        '200':
+          description: order book data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderBookDetail'
+  /public/getmarkethistory:
+    get:
+      tags:
+        - Public
+      summary: Get Market History
+      operationId: getMarketHistory
+      description: |
+        Used to retrieve the latest trades that have occured for a specific market.
+      parameters:
+        - $ref: "#/components/parameters/market"
+      responses:
+        '200':
+          description: order book data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketHistory'
+  /account/getbalances:
+    get:
+      tags:
+        - Account
+      summary: get Balances.
+      operationId: getBalances
+      description: |
+        Used to retrieve all balances from your account
+      parameters:
+        - $ref: "#/components/parameters/apisign"
+        - $ref: "#/components/parameters/apikey"
+      responses:
+        '200':
+          description: balances data data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balances'
+components:
+  schemas:
+    balance:
+      type: object
+      properties:
+        Currency: 
+          type: string
+          example: DOGE
+        Balance: 
+          type: number
+          format: double
+          example: 12.02000000
+        Available: 
+          type: number
+          format: double
+          example: 12.02000000
+        Pending:
+          type: number
+          format: double
+          example: 12.02000000
+        CryptoAddress:
+          type: string
+          example: DLxcEt3AatMyr2NTatzjsfHNoB9NT62HiF
+        Requested: 
+          type: boolean
+          example: false
+        Uuid:
+          type: string
+      required:
+        - Currency
+        - Balance
+        - Available 
+        - Pending
+        - CryptoAddress
+        - Requested
+    balances:
+      type: object
+      properties:
+        success: 
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: ""
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/balance'
+    currencies:
+      type: object
+      properties:
+        success: 
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: ""
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/currency'
+      required:
+        - success
+        - message
+        - result
+    currency:
+      type: object
+      properties:
+        Currency: 
+          type: string
+          example: BTC
+        CurrencyLong:
+          type: string
+          example: Bitcoin
+        MinConfirmation: 
+          type: integer
+          format: int32
+          example: 2
+        TxFee: 
+          type: number
+          format: double
+          example: 0.00020000
+        IsActive: 
+          type: boolean
+          example: true
+        CoinType:
+          type: string
+          example: BITCOIN
+        BaseAddress:
+          type: string
+          format: uri
+      required:
+      - Currency
+      - CurrencyLong
+      - MinConfirmation 
+      - TxFee
+      - IsActive 
+      - CoinType
+      - BaseAddress
+    market:
+      type: object
+      properties:
+        MarketCurrency:
+          type: string
+          example: LTC,
+        BaseCurrency:
+          type: string 
+          example: BTC,
+        MarketCurrencyLong:
+          type: string
+          example: Litecoin,
+        BaseCurrencyLong:
+          type: string
+          example: Bitcoin,
+        MinTradeSize:
+          type: number
+          format: double
+          example: 0.01000000,
+        MarketName:
+          type: string
+          example: BTC-LTC,
+        IsActive: 
+          type: boolean
+          example: true,
+        Created:
+          type: string
+          format: date-time
+          example: 2014-02-13T00:00:00
+      required:
+      - MarketCurrency
+      - BaseCurrency
+      - MarketCurrencyLong
+      - BaseCurrencyLong
+      - MinTradeSize
+      - MarketName
+      - IsActive 
+      - Created
+    marketHistory:
+      type: object
+      properties:
+        success: 
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: ""
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/trade'
+      required:
+        - success
+        - message
+        - result
+    markets:
+      type: object
+      properties:
+        success: 
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: ""
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/market'
+      required:
+        - success
+        - message
+        - result    
+    marketSummaries:
+      type: object
+      properties:
+        success: 
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: ""
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/marketSummary'
+      required:
+        - success
+        - message
+        - result
+    marketSummary:
+      type: object
+      properties:
+        MarketName:
+          type: string
+          example: BTC-888
+        High:
+          type: number
+          format: double
+          example: 0.00000919
+        Low:
+          type: number
+          format: double
+          example: 0.00000820
+        Volume:
+          type: number
+          format: double
+          example: 74339.61396015
+        Last:
+          type: number
+          format: double
+          example: 0.00000820
+        BaseVolume:
+          type: number
+          format: double
+          example: 0.64966963
+        TimeStamp:
+          type: string
+          format: date-time
+          example: 2014-07-09T07:19:30.15
+        Bid:
+          type: number
+          format: double
+          example: 0.00000820
+        Ask:
+          type: number
+          format: double
+          example: 0.00000831
+        OpenBuyOrders: 
+          type: integer
+          format: int32
+          example: 15
+        OpenSellOrders: 
+          type: integer
+          format: int32
+          example: 15
+        PrevDay:
+          type: number
+          format: double
+          example: 0.00000821
+        Created:
+          type: string
+          format: date-time
+          example: 2014-03-20T06:00:00,
+        DisplayMarketName:
+          type: string
+      required:
+      - MarketName
+      - High
+      - Low
+      - Volume
+      - Last
+      - BaseVolume
+      - TimeStamp
+      - Bid
+      - Ask
+      - OpenBuyOrders
+      - OpenSellOrders
+      - PrevDay
+      - Created
+    marketSummaryDetail:
+      type: object
+      properties:
+        success: 
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: ""
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/marketSummary'
+      required:
+        - success
+        - message
+        - result
+    order:
+      type: object
+      properties:
+        Quantity: 
+          type: number
+          format: double
+          example: 32.55412402
+        Rate:
+          type: number
+          format: double
+          example: 0.02540000
+      required:
+        - Quantity
+        - Rate
+    orderBook:
+      type: object
+      properties:
+        buy:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
+        sell:
+          type: array
+          items:
+            $ref: '#/components/schemas/order'
+    orderBookDetail:
+      type: object
+      properties:
+        success: 
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: ""
+        result:
+          $ref: '#/components/schemas/orderBook'
+      required:
+        - success
+        - message
+        - result
+    ticker:
+      type: object
+      properties:
+        Bid:
+          type: number
+          format: double
+          example: 2.05670368
+        Ask:
+          type: number
+          format: double
+          example: 3.35579531
+        Last: 
+          type: number
+          format: double
+          example: 3.35579531
+      required:
+      - Bid
+      - Ask
+      - Last
+    tickerDetail:
+      type: object
+      properties:
+        success: 
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: ""
+        result:
+          $ref: '#/components/schemas/ticker'
+      required:
+        - success
+        - message
+        - result
+    trade:
+      type: object
+      properties:
+        Id: 
+          type: integer
+          format: Int32
+          example: 319435
+        TimeStamp: 
+          type: string
+          format: date-time
+          example: 2014-07-09T03:21:20.08
+        Quantity: 
+          type: number
+          format: double
+          example: 0.30802438
+        Price: 
+          type: number
+          format: double
+          example: 0.01263400
+        Total: 
+          type: number
+          format: double
+          example: 0.00389158
+        FillType: 
+          type: string
+          enum: [FILL, PARTIAL_FILL]
+        OrderType:
+          type: string
+          enum: [BUY, SELL]
+      required:
+        - Id
+        - TimeStamp
+        - Quantity
+        - Price
+        - Total
+        - FillType
+        - OrderType
+  parameters:
+    apisign:
+      name: apisign
+      in: header
+      required: true
+      schema:
+        type: string
+    apikey:
+      name: apikey
+      in: query
+      required: true
+      description: Bittrex Api Key
+      schema:
+        type: string
+    market:
+        name: market
+        in: query
+        required: true
+        description: a string literal for the market (e.g. BTC-LTC)
+        example: BTC-LTC
+        schema:
+          type: string
