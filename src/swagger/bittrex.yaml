@@ -3,8 +3,6 @@ info:
   description: 'Bittrex provides a simple and powerful REST API to allow you to programatically perform nearly all actions you can from our web interface. All requests use the application/json content type and go over https. The base url is https://bittrex.com/api/{version}/. All requests are GET requests and all responses come in a default response object with the result in the result field. Always check the success flag to ensure that your API call succeeded.'
   version: 1.0.0
   title: Bittrex API
-  contact:
-    email: alexandre.jx@gmail.com
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
