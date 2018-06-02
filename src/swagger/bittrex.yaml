@@ -318,7 +318,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/orderResult'
   /account/getorderhistory:
-    get:  
+    get:
       tags:
         - Account
       summary: Get a collection of orders.
@@ -337,11 +337,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/orderListResult'
   /account/getwithdrawalhistory:
-    get:  
+    get:
       tags:
         - Account
       summary: Get a collection of orders.
-      operationId: getOrderList
+      operationId: getWithdrawList
       description: |
         Used to retrieve your order history.
       parameters:
@@ -356,11 +356,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/operationHistoryResult'
   /account/getdeposithistory:
-    get:  
+    get:
       tags:
         - Account
       summary: Get a collection of orders.
-      operationId: getOrderList
+      operationId: getDepositList
       description: |
         Used to retrieve your order history.
       parameters:
@@ -690,49 +690,49 @@ components:
         OrderUuid:
           type: string
           format: uuid
-          example: "09aa5bb6-8232-41aa-9b78-a5a1093e0211"
+          example: 09aa5bb6-8232-41aa-9b78-a5a1093e0211
         Exchange:
           type: string
-          example: "BTC-LTC"
+          example: BTC-LTC
         OrderType:
           type: string
-          example: "LIMIT_SELL"
-        Quantity: 
+          example: LIMIT_SELL
+        Quantity:
           type: number
           format: double
-          example: 5.00000000
-        QuantityRemaining: 
+          example: 5
+        QuantityRemaining:
           type: number
           format: double
-          example: 5.00000000
-        Limit: 
+          example: 5
+        Limit:
           type: number
           format: double
-          example: 2.00000000
-        CommissionPaid: 
+          example: 2
+        CommissionPaid:
           type: number
           format: double
-          example: 0.00000000
-        Price: 
+          example: 0
+        Price:
           type: number
           format: double
-          example: 0.00000000
-        PricePerUnit: 
+          example: 0
+        PricePerUnit:
           type: number
           format: double
-        Opened: 
+        Opened:
           type: string
           format: date-time
-          example: 2014-07-09T03:55:48.77
-        Closed: 
+          example: 2014-07-09T03:55:48.770Z
+        Closed:
           type: string
-        CancelInitiated: 
+        CancelInitiated:
           type: boolean
           example: false
-        ImmediateOrCancel: 
+        ImmediateOrCancel:
           type: boolean
           example: false
-        IsConditional: 
+        IsConditional:
           type: boolean
           example: false
         Condition:
@@ -827,7 +827,7 @@ components:
           description: order unique identifier
           type: string
           format: uuid
-          example: "614c34e4-8d71-11e3-94b5-425861b86ab6"
+          example: 614c34e4-8d71-11e3-94b5-425861b86ab6
       required:
         - uuid
     orderResult:
@@ -946,14 +946,14 @@ components:
         Amount:
           type: number
           format: double
-          example: 17.00000000
+          example: 17
         Address:
           type: string
           example: 1DeaaFBdbB5nrHj87x3NHS4onvw1GPNyAu
         Opened:
           type: string
           format: date-time
-          example: 2014-07-09T04:24:47.217
+          example: 2014-07-09T04:24:47.217Z
         Authorized:
           type: boolean
           example: true
@@ -963,13 +963,13 @@ components:
         TxCost:
           type: number
           format: double
-          example: 0.00020000
+          example: 0.0002
         TxId:
           type: string
         Canceled:
           type: boolean
           example: true
-        InvalidAddress: 
+        InvalidAddress:
           type: boolean
           example: false
       required:
@@ -1014,7 +1014,7 @@ components:
       required: true
       description: Bittrex Api Key
       schema:
-        type: string   
+        type: string
     currency:
       name: currency
       in: query
