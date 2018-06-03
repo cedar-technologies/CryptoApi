@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSharp.Client", "CryptoSharp.Client\CryptoSharp.Client.csproj", "{34058706-E9AC-4A10-AD95-B38E5E17839F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoSharp.Client", "CryptoSharp.Client\CryptoSharp.Client.csproj", "{34058706-E9AC-4A10-AD95-B38E5E17839F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSharp.Core", "CryptoSharp.Core\CryptoSharp.Core.csproj", "{001B0D02-58DE-4CEB-9F1A-71CD2D7F52BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSharp.ClientGenerator", "CryptoSharp.ClientGenerator\CryptoSharp.ClientGenerator.csproj", "{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{34058706-E9AC-4A10-AD95-B38E5E17839F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34058706-E9AC-4A10-AD95-B38E5E17839F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34058706-E9AC-4A10-AD95-B38E5E17839F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{001B0D02-58DE-4CEB-9F1A-71CD2D7F52BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{001B0D02-58DE-4CEB-9F1A-71CD2D7F52BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{001B0D02-58DE-4CEB-9F1A-71CD2D7F52BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{001B0D02-58DE-4CEB-9F1A-71CD2D7F52BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
