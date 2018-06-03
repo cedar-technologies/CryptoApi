@@ -447,7 +447,6 @@ components:
       required:
         - success
         - message
-        - result
     currency:
       type: object
       properties:
@@ -558,7 +557,6 @@ components:
       required:
         - success
         - message
-        - result
     marketListResult:
       type: object
       properties:
@@ -575,7 +573,6 @@ components:
       required:
         - success
         - message
-        - result
     marketSummariesResult:
       type: object
       properties:
@@ -592,7 +589,6 @@ components:
       required:
         - success
         - message
-        - result
     marketSummary:
       type: object
       properties:
@@ -679,7 +675,6 @@ components:
       required:
         - success
         - message
-        - result
     order:
       type: object
       properties:
@@ -776,7 +771,6 @@ components:
       required:
         - success
         - message
-        - result
     orderCanceledResult:
       type: object
       properties:
@@ -889,7 +883,6 @@ components:
       required:
         - success
         - message
-        - result
     trade:
       type: object
       properties:
