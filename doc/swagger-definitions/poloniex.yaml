@@ -11,7 +11,7 @@ servers:
 tags:
   - name: Public
     description: 'Please note that making more than 6 calls per second to the public API, or repeatedly and needlessly fetching excessive amounts of data, can result in your IP being banned.'
-  - name: Trading
+  - name: Trading API
     description: For programmatic trading of crypto currencies
 paths:
   /public:
@@ -19,11 +19,11 @@ paths:
       tags:
         - Public
       summary: returnTicker
-      operationId: getMarkets
+      operationId: publicCommand
       description: |
         Used to get the open and available trading markets at Bittrex along with other meta data.
       parameters:
-        - $ref: '#/components/parameters/command'
+        - $ref: '#/components/parameters/publicCommand'
         - $ref: '#/components/parameters/currencyPair'
         - $ref: '#/components/parameters/start'
         - $ref: '#/components/parameters/end'
@@ -32,7 +32,7 @@ paths:
         - $ref: '#/components/parameters/currency'
       responses:
         '200':
-          description: One of the multipler response schema
+          description: One of the public response schema
           content:
             application/json:
               schema:
@@ -44,6 +44,29 @@ paths:
                   - $ref: '#/components/schemas/chartDataResult'
                   - $ref: '#/components/schemas/currenciesResult'
                   - $ref: '#/components/schemas/loanOrdersResult'
+  /tradingApi:
+    post:
+      tags:
+        - Trading API
+      description: |
+        To use the trading API, you will need to [create an API key](https://poloniex.com/apiKeys).
+        Please note that there is a default limit of 6 calls per second. If you require more than this, please consider optimizing your application using the push API, the "moveOrder" command, or the "all" parameter where appropriate. If this is still insufficient, please contact support to discuss a limit raise.
+        All calls to the trading API are sent via HTTP POST to https://poloniex.com/tradingApi and must contain the following headers:
+        - **Key** - Your API key.
+        - **Sign** - The query's POST data signed by your key's "secret" according to the HMAC-SHA512 method.
+        
+        Additionally, all queries must include a "nonce" POST parameter. The nonce parameter is an integer which must always be greater than the previous nonce used.
+        All responses from the trading API are in JSON format. In the event of an error, the response will always be of the following format:
+      parameters:
+        - $ref: '#/components/parameters/tradingApiCommand'
+      responses:
+        '200':
+          description: One of the Trading API response schema
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/returnBalancesResult'
 components:
   schemas:
     24Volume:
@@ -115,7 +138,7 @@ components:
         txFee:
           type: number
           format: double
-          example: 0.01000000
+          example: 0.01
         minConf:
           type: integer
           example: 3
@@ -260,6 +283,11 @@ components:
           example: 0
         seq:
           type: integer
+    returnBalancesResult:
+      type: object
+      additionalProperties:
+        type: number
+        format: double
     tickerResult:
       type: object
       additionalProperties:
@@ -307,20 +335,6 @@ components:
       items:
         $ref: '#/components/schemas/trade'
   parameters:
-    command:
-      name: command
-      in: query
-      required: true
-      schema:
-        type: string
-        enum:
-          - returnTicker
-          - return24hVolume
-          - returnOrderBook
-          - returnTradeHistory
-          - returnChartData
-          - returnCurrencies
-          - returnLoanOrders
     currency:
       name: currency
       description: a given currency (returnLoanOrders)
@@ -341,14 +355,6 @@ components:
       schema:
         type: integer
         example: 10
-    start:
-      name: start
-      in: query
-      description: 'The start date as unix millisecond timestamp (returnTradeHistory, returnChartData)'
-      schema:
-        type: integer
-        format: int64
-        example: 1410158341
     end:
       name: end
       in: query
@@ -370,3 +376,60 @@ components:
           - 7200
           - 14400
           - 86400
+    publicCommand:
+      name: command
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - returnTicker
+          - return24hVolume
+          - returnOrderBook
+          - returnTradeHistory
+          - returnChartData
+          - returnCurrencies
+          - returnLoanOrders
+    tradingApiCommand:
+      name: command
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - returnBalances
+          - returnCompleteBalances
+          - returnDepositAddresses
+          - generateNewAddress
+          - returnDepositsWithdrawals
+          - returnOpenOrders
+          - returnTradeHistory
+          - returnOrderTrades
+          - buy
+          - sell
+          - cancelOrder
+          - moveOrder
+          - withdraw
+          - returnFeeInfo
+          - returnAvailableAccountBalances
+          - returnTradableBalances
+          - transferBalance
+          - returnMarginAccountSummary
+          - marginBuy
+          - marginSell
+          - getMarginPosition
+          - closeMarginPosition
+          - createLoanOffer
+          - cancelLoanOffer
+          - returnOpenLoanOffers
+          - returnActiveLoans
+          - returnLendingHistory
+          - toggleAutoRenew
+    start:
+      name: start
+      in: query
+      description: 'The start date as unix millisecond timestamp (returnTradeHistory, returnChartData)'
+      schema:
+        type: integer
+        format: int64
+        example: 1410158341
