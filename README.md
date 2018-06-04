@@ -8,7 +8,7 @@ CryptoSharp is a C# collection of adapters for cryptocurrency exchanges.
 
 ### Swagger Definitions
 
-Echange client are generated using [NSwag](https://github.com/RSuter/NSwag) based on definitions located in [doc/swaggers]()
+Echange client are generated using [NSwag](https://github.com/RSuter/NSwag) based on definitions located in [doc/swaggers](https://github.com/cedar-technologies/CryptoSharp/tree/master/doc/swagger-definitions)
 
 ## Donate
 
