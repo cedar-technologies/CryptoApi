@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSharp.Core", "CryptoS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSharp.ClientGenerator", "CryptoSharp.ClientGenerator\CryptoSharp.ClientGenerator.csproj", "{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSharp.Sample", "CryptoSharp.Sample\CryptoSharp.Sample.csproj", "{378F2EB5-7D52-4FC3-9D86-53DE2237FC54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSharp.Tests", "CryptoSharp.Tests\CryptoSharp.Tests.csproj", "{0C5C8BFB-F3E9-44D8-8C93-27605FAA9057}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F045FC1C-6711-4CD9-9C53-F71BCD3BCC4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{378F2EB5-7D52-4FC3-9D86-53DE2237FC54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{378F2EB5-7D52-4FC3-9D86-53DE2237FC54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{378F2EB5-7D52-4FC3-9D86-53DE2237FC54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{378F2EB5-7D52-4FC3-9D86-53DE2237FC54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C5C8BFB-F3E9-44D8-8C93-27605FAA9057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C5C8BFB-F3E9-44D8-8C93-27605FAA9057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C5C8BFB-F3E9-44D8-8C93-27605FAA9057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C5C8BFB-F3E9-44D8-8C93-27605FAA9057}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

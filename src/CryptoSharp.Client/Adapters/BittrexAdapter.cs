@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CryptoSharp.Client.Exchanges.Bittrex;
-using CryptoSharp.Client.Mappers;
 using Cryptrend.Core.Exchange;
 using CrypTrend.Adapter.Adapters;
 using CrypTrend.Core.Models;
@@ -13,7 +12,9 @@ namespace CrypTrend.Client.Adapters
     {
 
         private readonly IBittrexClient _bittrexClient;
-        private const TradingPairFormatOption _tradingPairFormatOption = TradingPairFormatOption.QuoteFirstDash;
+
+        public string Name => ExchangeName.Bittrex.Value;
+        public TradingPairFormatOption TradingPairFormatOption => TradingPairFormatOption.QuoteFirstDash;
 
         public BittrexAdapter(IBittrexClient bittrexClient)
         {
@@ -28,10 +29,11 @@ namespace CrypTrend.Client.Adapters
 
         public async Task<Core.Models.Ticker> GetTickerAsync(TradingPair tradingPair, CancellationToken cancellationToken)
         {
-            var result = await _bittrexClient.GetTickerAsync(tradingPair.ToString(_tradingPairFormatOption), cancellationToken);
+            var result = await _bittrexClient.GetTickerAsync(tradingPair.ToString(TradingPairFormatOption), cancellationToken);
             if (!result.Success)
                 throw new Exception(result.Message);
-            return result.Result.ToTicker(tradingPair, ExchangeName.Bittrex.Value);
+            
+            return new Core.Models.Ticker(Name, tradingPair, Convert.ToDecimal(result.Result.Ask), Convert.ToDecimal(result.Result.Bid), Convert.ToDecimal(result.Result.Last));
         }
     }
 }

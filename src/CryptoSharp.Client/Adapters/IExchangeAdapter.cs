@@ -8,6 +8,16 @@ namespace CrypTrend.Adapter.Adapters
     {
 
         /// <summary>
+        /// Name of the exchange
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Trading Pair Format options, used to print are read trading pair.
+        /// </summary>
+        TradingPairFormatOption TradingPairFormatOption { get; }
+
+        /// <summary>
         /// Gets the current tick values for a trading pair.
         /// </summary>
         /// <param name="tradingPair">A trading pair <see cref="TradingPair"/></param>
