@@ -24,6 +24,11 @@ paths:
         Used to get the open and available trading markets at Bittrex along with other meta data.
       parameters:
         - $ref: '#/components/parameters/command'
+        - $ref: '#/components/parameters/currencyPair'
+        - $ref: '#/components/parameters/start'
+        - $ref: '#/components/parameters/end'
+        - $ref: '#/components/parameters/depth'
+        - $ref: '#/components/parameters/period'
       responses:
         '200':
           description: One of the multipler response schema
@@ -31,54 +36,114 @@ paths:
             application/json:
               schema:
                 oneOf:
-                 - $ref: '#/components/schemas/returnTickerResult'
-                 - $ref: '#/components/schemas/return24VolumeResult'
+                  - $ref: '#/components/schemas/tickerResult'
+                  - $ref: '#/components/schemas/24VolumeResult'
+                  - $ref: '#/components/schemas/orderBookResult'
+                  - $ref: '#/components/schemas/tradeHistoryResult'
+                  - $ref: '#/components/schemas/chartDataResult'
 components:
   schemas:
+    24Volume:
+      type: object
+      additionalProperties:
+        type: number
+        format: double
+    24VolumeResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/24Volume'
+    chartData:
+      type: object
+      properties:
+        date:
+          type: integer
+          description: unix time stamp
+          example: 1405699200
+        high:
+          type: number
+          format: double
+          example: 0.00007995
+        low:
+          type: number
+          format: double
+          example: 0.00007417
+        open:
+          type: number
+          format: double
+          example: 0.00007468
+        close:
+          type: number
+          format: double
+          example: 0.0000752
+        volume:
+          type: number
+          format: double
+          example: 0.44918113
+        quoteVolume:
+          type: number
+          format: double
+          example: 5884.91562797
+        weightedAverage:
+          type: number
+          format: double
+          example: 0.00007632
+      required:
+        - date
+        - high
+        - low
+        - open
+        - close
+        - volume
+        - quoteVolume
+        - weightedAverage
+    chartDataResult:
+      type: array
+      items:
+        $ref: '#/components/schemas/chartData'
     market:
       type: object
       properties:
-          id: 
-            type: integer
-            example: 7
-          last:
-            type: number
-            format: double
-            example: 0.00000080
-          lowestAsk:
-            type: number
-            format: double
-            example: 0.00000081
-          highestBid:
-            type: number
-            format: double
-            example: 0.00000080
-          percentChange:
-            type: number
-            format: double
-            example: -0.04761904
-          baseVolume:
-            type: number
-            format: double
-            example: 68.18903938
-          quoteVolume:
-            type: number
-            format: double
-            example: 83845318.41376261
-          isFrozen: 
-            type: integer
-            enum:
-              - 0
-              - 1
-            example: 0
-          high24hr:
-            type: number
-            format: double
-            example: 0.00000085
-          low24hr:
-            type: number
-            format: double
-            example: 0.00000079
+        id:
+          type: integer
+          example: 7
+        last:
+          type: number
+          format: double
+          example: 0.00007451
+        lowestAsk:
+          type: number
+          format: double
+          example: 0.00007451
+        highestBid:
+          type: number
+          format: double
+          example: 0.00007451
+        percentChange:
+          type: number
+          format: double
+          example: -0.04761904
+        baseVolume:
+          type: number
+          format: double
+          example: 68.18903938
+        quoteVolume:
+          type: number
+          format: double
+          example: 83845318.41376261
+        isFrozen:
+          type: integer
+          enum:
+            - 0
+            - 1
+          example: 0
+        high24hr:
+          type: number
+          format: double
+          example: 8.5e-7
+        low24hr:
+          type: number
+          format: double
+          example: 7.9e-7
       required:
         - id
         - last
@@ -90,22 +155,125 @@ components:
         - isFrozen
         - high24hr
         - low24hr
-    returnTickerResult:
+    orderBookResult:
+      type: object
+      properties:
+        ask:
+          type: array
+          items:
+            type: number
+            format: float
+        bid:
+          type: array
+          items:
+            type: number
+            format: float
+        isFrozen:
+          type: integer
+          enum:
+            - 0
+            - 1
+          example: 0
+        seq:
+          type: integer
+    tickerResult:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/market'
-    return24VolumeResult:
+    trade:
       type: object
       properties:
-        test:
+        globalTradeID:
+          type: integer
+          example: 2036467
+        tradeID:
+          type: integer
+          example: 21387
+        date:
           type: string
-  parameters: 
+          format: date-time
+          example: 2014-09-12 05:21:26
+        type:
+          type: string
+          enum:
+            - buy
+            - sell
+        rate:
+          type: number
+          format: double
+          example: 0.00008943
+        amount:
+          type: number
+          format: double
+          example: 1.27241180
+        total:
+          type: number
+          format: double
+          example: 0.00011379
+      required:
+        - globalTradeID
+        - tradeID
+        - date
+        - type
+        - rate
+        - amount
+        - total
+    tradeHistoryResult:
+      type: array
+      items:
+        $ref: '#/components/schemas/trade'
+  parameters:
     command:
       name: command
       in: query
       required: true
       schema:
         type: string
-        enum: 
-         - returnTicker
-         - return24hVolume
+        enum:
+          - returnTicker
+          - return24hVolume
+          - returnOrderBook
+          - returnTradeHistory
+          - returnChartData
+    currencyPair:
+      name: currencyPair
+      in: query
+      schema:
+        type: string
+        example: BTC_NXT
+    depth:
+      name: depth
+      in: query
+      description: depth of the order book (returnOrderBook, returnTradeHistory, returnChartData)
+      schema:
+        type: integer
+        example: 10
+    start:
+      name: start
+      in: query
+      description: The start date as unix millisecond timestamp (returnTradeHistory, returnChartData)
+      schema:
+        type: integer
+        format: int64
+        example: 1410158341
+    end:
+      name: end
+      in: query
+      description: The end date as unix millisecond timestamp (returnTradeHistory, returnChartData)
+      schema:
+        type: integer
+        format: int64
+        example: 1410158341
+    period:
+      name: period
+      in: query
+      description: candlestick period in seconds; valid values (returnChartData)
+      schema:
+        type: integer
+        enum:
+          - 300
+          - 900
+          - 1800
+          - 7200
+          - 14400
+          - 86400
