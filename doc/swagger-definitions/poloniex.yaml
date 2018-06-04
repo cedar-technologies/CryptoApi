@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  description: 'API DOCUMENTATION'
+  description: API DOCUMENTATION
   version: 1.0.0
   title: Poloniex API
   license:
@@ -10,20 +10,102 @@ servers:
   - url: ' https://poloniex.com'
 tags:
   - name: Public
-    description: Please note that making more than 6 calls per second to the public API, or repeatedly and needlessly fetching excessive amounts of data, can result in your IP being banned.
+    description: 'Please note that making more than 6 calls per second to the public API, or repeatedly and needlessly fetching excessive amounts of data, can result in your IP being banned.'
   - name: Trading
     description: For programmatic trading of crypto currencies
 paths:
-  /public?command=returnTicker:
+  /public:
     get:
       tags:
         - Public
-      summary: Market Meta Data
+      summary: returnTicker
       operationId: getMarkets
       description: |
         Used to get the open and available trading markets at Bittrex along with other meta data.
+      parameters:
+        - $ref: '#/components/parameters/command'
       responses:
         '200':
+          description: One of the multipler response schema
+          content:
+            application/json:
+              schema:
+                oneOf:
+                 - $ref: '#/components/schemas/returnTickerResult'
+                 - $ref: '#/components/schemas/return24VolumeResult'
 components:
   schemas:
-  parameters:
+    market:
+      type: object
+      properties:
+          id: 
+            type: integer
+            example: 7
+          last:
+            type: number
+            format: double
+            example: 0.00000080
+          lowestAsk:
+            type: number
+            format: double
+            example: 0.00000081
+          highestBid:
+            type: number
+            format: double
+            example: 0.00000080
+          percentChange:
+            type: number
+            format: double
+            example: -0.04761904
+          baseVolume:
+            type: number
+            format: double
+            example: 68.18903938
+          quoteVolume:
+            type: number
+            format: double
+            example: 83845318.41376261
+          isFrozen: 
+            type: integer
+            enum:
+              - 0
+              - 1
+            example: 0
+          high24hr:
+            type: number
+            format: double
+            example: 0.00000085
+          low24hr:
+            type: number
+            format: double
+            example: 0.00000079
+      required:
+        - id
+        - last
+        - lowestAsk
+        - highestBid
+        - percentChange
+        - baseVolume
+        - quoteVolume
+        - isFrozen
+        - high24hr
+        - low24hr
+    returnTickerResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/market'
+    return24VolumeResult:
+      type: object
+      properties:
+        test:
+          type: string
+  parameters: 
+    command:
+      name: command
+      in: query
+      required: true
+      schema:
+        type: string
+        enum: 
+         - returnTicker
+         - return24hVolume
