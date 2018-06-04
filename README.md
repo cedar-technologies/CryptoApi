@@ -2,7 +2,7 @@
 
 ## Overview
 
-CryptoShare is a C# collection of adapters for cryptocurrency exchanges.
+CryptoSharp is a C# collection of adapters for cryptocurrency exchanges.
 
 ## Features
 
