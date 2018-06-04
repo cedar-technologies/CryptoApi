@@ -29,6 +29,7 @@ paths:
         - $ref: '#/components/parameters/end'
         - $ref: '#/components/parameters/depth'
         - $ref: '#/components/parameters/period'
+        - $ref: '#/components/parameters/currency'
       responses:
         '200':
           description: One of the multipler response schema
@@ -41,6 +42,8 @@ paths:
                   - $ref: '#/components/schemas/orderBookResult'
                   - $ref: '#/components/schemas/tradeHistoryResult'
                   - $ref: '#/components/schemas/chartDataResult'
+                  - $ref: '#/components/schemas/currenciesResult'
+                  - $ref: '#/components/schemas/loanOrdersResult'
 components:
   schemas:
     24Volume:
@@ -100,6 +103,87 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/chartData'
+    currency:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 1CRedit
+        txFee:
+          type: number
+          format: double
+          example: 0.01000000
+        minConf:
+          type: integer
+          example: 3
+        depositAddress:
+          type: string
+        disabled:
+          type: integer
+          enum:
+            - 0
+            - 1
+          example: 0
+        delisted:
+          type: integer
+          enum:
+            - 0
+            - 1
+          example: 0
+        frozen:
+          type: integer
+          enum:
+            - 0
+            - 1
+          example: 0
+      required:
+        - id
+        - name
+        - txFee
+        - minConf
+        - disabled
+        - delisted
+        - frozen
+    currenciesResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/currency'
+    loan:
+      type: object
+      properties:
+        rate:
+          type: number
+          format: double
+          example: 0.00009439
+        amount:
+          type: number
+          format: double
+          example: 68.21714101
+        rangeMin:
+          type: integer
+          example: 2
+        rangeMax:
+          type: integer
+          example: 2
+      required:
+        - rate
+        - amount
+        - rangeMin
+        - rangeMax
+    loanOrdersResult:
+      type: object
+      properties:
+        offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/loan'
+        demands:
+          type: array
+          items:
+            $ref: '#/components/schemas/loan'
     market:
       type: object
       properties:
@@ -192,7 +276,7 @@ components:
         date:
           type: string
           format: date-time
-          example: 2014-09-12 05:21:26
+          example: 2014-09-12T05:21:26.000Z
         type:
           type: string
           enum:
@@ -205,7 +289,7 @@ components:
         amount:
           type: number
           format: double
-          example: 1.27241180
+          example: 1.2724118
         total:
           type: number
           format: double
@@ -235,6 +319,15 @@ components:
           - returnOrderBook
           - returnTradeHistory
           - returnChartData
+          - returnCurrencies
+          - returnLoanOrders
+    currency:
+      name: currency
+      description: a given currency (returnLoanOrders)
+      in: query
+      schema:
+        type: string
+        example: BTC
     currencyPair:
       name: currencyPair
       in: query
@@ -244,14 +337,14 @@ components:
     depth:
       name: depth
       in: query
-      description: depth of the order book (returnOrderBook, returnTradeHistory, returnChartData)
+      description: 'depth of the order book (returnOrderBook, returnTradeHistory, returnChartData)'
       schema:
         type: integer
         example: 10
     start:
       name: start
       in: query
-      description: The start date as unix millisecond timestamp (returnTradeHistory, returnChartData)
+      description: 'The start date as unix millisecond timestamp (returnTradeHistory, returnChartData)'
       schema:
         type: integer
         format: int64
@@ -259,7 +352,7 @@ components:
     end:
       name: end
       in: query
-      description: The end date as unix millisecond timestamp (returnTradeHistory, returnChartData)
+      description: 'The end date as unix millisecond timestamp (returnTradeHistory, returnChartData)'
       schema:
         type: integer
         format: int64
