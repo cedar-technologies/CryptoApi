@@ -18,7 +18,7 @@ paths:
     get:
       tags:
         - Public
-      summary: returnTicker
+      summary: public API
       operationId: publicCommand
       description: |
         Used to get the open and available trading markets at Bittrex along with other meta data.
@@ -48,13 +48,14 @@ paths:
     post:
       tags:
         - Trading API
+      summary: Trading API 
       description: |
         To use the trading API, you will need to [create an API key](https://poloniex.com/apiKeys).
         Please note that there is a default limit of 6 calls per second. If you require more than this, please consider optimizing your application using the push API, the "moveOrder" command, or the "all" parameter where appropriate. If this is still insufficient, please contact support to discuss a limit raise.
         All calls to the trading API are sent via HTTP POST to https://poloniex.com/tradingApi and must contain the following headers:
         - **Key** - Your API key.
         - **Sign** - The query's POST data signed by your key's "secret" according to the HMAC-SHA512 method.
-        
+
         Additionally, all queries must include a "nonce" POST parameter. The nonce parameter is an integer which must always be greater than the previous nonce used.
         All responses from the trading API are in JSON format. In the event of an error, the response will always be of the following format:
       parameters:
@@ -249,7 +250,7 @@ components:
           example: ETH
         address:
           type: string
-          example: 0x4F82A1BD7E5a6d1658BEd3a449B8Dd6D77369e50
+          example: 4.539234573302469e+47
         amount:
           type: number
           format: double
@@ -278,14 +279,14 @@ components:
       properties:
         id:
           type: integer
-          example: 175589553,
+          example: '175589553,'
         currency:
           type: string
           example: BTC
         rate:
           type: number
           format: double
-          example: 0.00057400
+          example: 0.000574
         amount:
           type: number
           format: double
@@ -293,7 +294,7 @@ components:
         duration:
           type: number
           format: double
-          example: 0.47610000
+          example: 0.4761
         interest:
           type: number
           format: double
@@ -309,11 +310,11 @@ components:
         open:
           type: string
           format: date-time
-          example: 2016-09-28 06:47:26
+          example: 2016-09-28T06:47:26.000Z
         close:
           type: string
           format: date-time
-          example: 2016-09-28 18:13:03
+          example: 2016-09-28T18:13:03.000Z
       required:
         - id
         - currency
@@ -356,11 +357,11 @@ components:
         rate:
           type: number
           format: double
-          example: 0.00020000
+          example: 0.0002
         amount:
           type: number
           format: double
-          example: 3.00000000
+          example: 3
         duration:
           type: integer
           example: 2
@@ -370,14 +371,14 @@ components:
         date:
           type: string
           format: date-time
-          example: 2015-05-10 23:33:50
+          example: 2015-05-10T23:33:50.000Z
       required:
-        - id:10595
-        - rate:"0.000
-        - amount:"3.0
-        - duration:2,
-        - autoRenew:1
-        - date:"2015-
+        - 'id:10595'
+        - 'rate:"0.000'
+        - 'amount:"3.0'
+        - 'duration:2,'
+        - 'autoRenew:1'
+        - 'date:"2015-'
     loanOrdersResult:
       type: object
       properties:
@@ -494,7 +495,7 @@ components:
         globalTradeID:
           type: integer
           example: 20825863
-        tradeID: 
+        tradeID:
           type: integer
           example: 147142
         currencyPair:
@@ -508,11 +509,11 @@ components:
         rate:
           type: number
           format: double
-          example: 0.00018500
+          example: 0.000185
         amount:
           type: number
           format: double
-          example: 455.34206390
+          example: 455.3420639
         total:
           type: number
           format: double
@@ -520,34 +521,34 @@ components:
         fee:
           type: number
           format: double
-          example: 0.00200000
+          example: 0.002
         date:
           type: string
           format: date-time
-          example: 2016-03-14 01:04:36"
+          example: '2016-03-14 01:04:36"'
     resultingTrade:
       type: object
       properties:
-        amount: 
+        amount:
           type: number
           format: double
           example: 338.8732
-        date: 
+        date:
           type: string
           format: date-time
-          example: 2014-10-18 23:03:21
-        rate: 
+          example: 2014-10-18T23:03:21.000Z
+        rate:
           type: number
           format: double
           example: 0.00000173
-        total: 
+        total:
           type: number
           format: double
           example: 0.00058625
-        tradeID: 
+        tradeID:
           type: integer
           example: 16164
-        type: 
+        type:
           type: string
           enum:
             - buy
@@ -643,13 +644,13 @@ components:
         fee:
           type: number
           format: double
-          example: 0.00200000
+          example: 0.002
         orderNumber:
           type: integer
           example: 34225313575
         category:
           type: string
-          enum: 
+          enum:
             - exchange
             - lending
             - margin
@@ -674,7 +675,7 @@ components:
         withdrawalNumber:
           type: integer
           example: 134933
-        currency: 
+        currency:
           type: string
           example: BTC
         address:
@@ -683,13 +684,13 @@ components:
         amount:
           type: number
           format: double
-          example: 5.00010000
+          example: 5.0001
         timestamp:
           type: integer
-          example: 1399267904,
+          example: '1399267904,'
         status:
           type: string
-          example: COMPLETE':' 36e483efa6aff9fd53a235177579d98451c4eb237c210e66cd2b9a2d4a988f8e
+          example: 'COMPLETE'':'' 36e483efa6aff9fd53a235177579d98451c4eb237c210e66cd2b9a2d4a988f8e'
         ipAddress:
           type: string
       required:
@@ -707,16 +708,16 @@ components:
     generateNewAddressResult:
       type: object
       properties:
-        success:   
+        success:
           type: boolean
           example: 1
-        response: 
+        response:
           type: string
           example: CKXbbs8FAVbtEa397gJHSutmrdrBrhUMxe
     returnDepositsWithdrawalsResult:
       type: object
       properties:
-        deposits: 
+        deposits:
           type: array
           items:
             $ref: '#/components/schemas/deposit'
@@ -785,8 +786,8 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/resultingTrade'
       required:
-          - success
-          - orderNumber
+        - success
+        - orderNumber
     withdrawResult:
       type: object
       properties:
@@ -801,11 +802,11 @@ components:
         makerFee:
           type: number
           format: double
-          example: 0.00140000
+          example: 0.0014
         takerFee:
           type: number
           format: double
-          example: 0.00240000
+          example: 0.0024
         thirtyDayVolume:
           type: number
           format: double
@@ -813,7 +814,7 @@ components:
         nextTier:
           type: number
           format: double
-          example: 1200.00000000
+          example: 1200
     returnAvailableAccountBalancesResult:
       type: object
       properties:
@@ -851,27 +852,27 @@ components:
     returnMarginAccountSummaryResult:
       type: object
       properties:
-        totalValue: 
+        totalValue:
           type: number
           format: double
           example: 0.00346561
-        pl: 
+        pl:
           type: number
           format: double
-          example: -0.00001220
-        lendingFees: 
+          example: -0.0000122
+        lendingFees:
           type: number
           format: double
-          example: 0.00000000
-        netValue: 
+          example: 0
+        netValue:
           type: number
           format: double
           example: 0.00345341
-        totalBorrowedValue: 
+        totalBorrowedValue:
           type: number
           format: double
-          example: 0.00123220
-        currentMargin: 
+          example: 0.0012322
+        currentMargin:
           type: number
           format: double
           example: 2.80263755
@@ -886,8 +887,8 @@ components:
       type: object
       properties:
         success:
-         type: boolean
-         example: 1
+          type: boolean
+          example: 1
         message:
           type: string
           example: Margin order placed
@@ -902,8 +903,8 @@ components:
       type: object
       properties:
         success:
-         type: boolean
-         example: 1
+          type: boolean
+          example: 1
         message:
           type: string
           example: Margin order placed
@@ -928,11 +929,11 @@ components:
         basePrice:
           type: number
           format: double
-          example: 0.00236190
+          example: 0.0023619
         liquidationPrice:
           type: number
           format: double
-          example:  -1,
+          example: '-1,'
         pl:
           type: number
           format: double
@@ -940,7 +941,7 @@ components:
         lendingFees:
           type: number
           format: double
-          example: -0.00000038
+          example: -3.8e-7
         type:
           type: string
           example: long
@@ -952,8 +953,8 @@ components:
       type: object
       properties:
         success:
-         type: boolean
-         example: 1
+          type: boolean
+          example: 1
         message:
           type: string
           example: Margin order placed
@@ -988,7 +989,7 @@ components:
           example: 1
         message:
           type: string
-          example: "Loan offer canceled."
+          example: Loan offer canceled.
       required:
         - success
         - message
@@ -1032,7 +1033,7 @@ components:
       in: query
       schema:
         type: integer
-        enum: 
+        enum:
           - 0
           - 1
     amount:
@@ -1097,7 +1098,7 @@ components:
     limit:
       name: limit
       in: query
-      description: up to a maximum of 10,000
+      description: 'up to a maximum of 10,000'
       schema:
         type: integer
         minimum: 0
