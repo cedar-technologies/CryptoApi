@@ -58,7 +58,24 @@ paths:
         Additionally, all queries must include a "nonce" POST parameter. The nonce parameter is an integer which must always be greater than the previous nonce used.
         All responses from the trading API are in JSON format. In the event of an error, the response will always be of the following format:
       parameters:
+        - $ref: '#/components/parameters/key'
+        - $ref: '#/components/parameters/sign'
         - $ref: '#/components/parameters/tradingApiCommand'
+        - $ref: '#/components/parameters/account'
+        - $ref: '#/components/parameters/currency'
+        - $ref: '#/components/parameters/start'
+        - $ref: '#/components/parameters/end'
+        - $ref: '#/components/parameters/currencyPair'
+        - $ref: '#/components/parameters/orderNumber'
+        - $ref: '#/components/parameters/rate'
+        - $ref: '#/components/parameters/amount'
+        - $ref: '#/components/parameters/address'
+        - $ref: '#/components/parameters/paymentId'
+        - $ref: '#/components/parameters/fromAccount'
+        - $ref: '#/components/parameters/toAccount'
+        - $ref: '#/components/parameters/lendingRate'
+        - $ref: '#/components/parameters/duration'
+        - $ref: '#/components/parameters/autoRenew'
       responses:
         '200':
           description: One of the Trading API response schema
@@ -67,6 +84,37 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/returnBalancesResult'
+                  - $ref: '#/components/schemas/returnBalancesResult'
+                  - $ref: '#/components/schemas/returnCompleteBalancesResult'
+                  - $ref: '#/components/schemas/returnDepositAddressesResult'
+                  - $ref: '#/components/schemas/generateNewAddressResult'
+                  - $ref: '#/components/schemas/returnDepositsWithdrawalsResult'
+                  - $ref: '#/components/schemas/returnOpenOrdersResult'
+                  - $ref: '#/components/schemas/returnTradeHistoryResult'
+                  - $ref: '#/components/schemas/returnOrderTradesResult'
+                  - $ref: '#/components/schemas/buyResult'
+                  - $ref: '#/components/schemas/sellResult'
+                  - $ref: '#/components/schemas/cancelOrderResult'
+                  - $ref: '#/components/schemas/moveOrderResult'
+                  - $ref: '#/components/schemas/withdrawResult'
+                  - $ref: '#/components/schemas/returnFeeInfoResult'
+                  - $ref: '#/components/schemas/returnAvailableAccountBalancesResult'
+                  - $ref: '#/components/schemas/returnTradableBalancesResult'
+                  - $ref: '#/components/schemas/transferBalanceResult'
+                  - $ref: '#/components/schemas/returnMarginAccountSummaryResult'
+                  - $ref: '#/components/schemas/marginBuyResult'
+                  - $ref: '#/components/schemas/marginSellResult'
+                  - $ref: '#/components/schemas/getMarginPositionResult'
+                  - $ref: '#/components/schemas/closeMarginPositionResult'
+                  - $ref: '#/components/schemas/createLoanOfferResult'
+                  - $ref: '#/components/schemas/cancelLoanOfferResult'
+                  - $ref: '#/components/schemas/returnOpenLoanOffersResult'
+                  - $ref: '#/components/schemas/returnActiveLoansResult'
+                  - $ref: '#/components/schemas/returnLendingHistoryResult'
+                  - $ref: '#/components/schemas/toggleAutoRenewResult'
+                  - $ref: '#/components/schemas/returnOpenOrdersAllResult'
+                  - $ref: '#/components/schemas/returnTradeHistoryAllResult'
+                  - $ref: '#/components/schemas/getMarginPositionAllResult'
 components:
   schemas:
     24Volume:
@@ -126,6 +174,25 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/chartData'
+    completeBalance:
+      type: object
+      properties:
+        available:
+          type: number
+          format: double
+          example: 5.015
+        onOrders:
+          type: number
+          format: double
+          example: 1.0025
+        btcValue:
+          type: number
+          format: double
+          example: 0.078
+      required:
+        - available
+        - onOrders
+        - btcValue
     currency:
       type: object
       properties:
@@ -174,6 +241,90 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/currency'
+    deposit:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: ETH
+        address:
+          type: string
+          example: 0x4F82A1BD7E5a6d1658BEd3a449B8Dd6D77369e50
+        amount:
+          type: number
+          format: double
+          example: 0.01006132
+        confirmations:
+          type: integer
+          example: 10
+        txid:
+          type: string
+          example: 17f819a91369a9ff6c4a34216d434597cfc1b4a3d0489b46bd6f924137a47701
+        timestamp:
+          type: integer
+          example: 1399305798
+        status:
+          type: string
+          example: COMPLETE
+      required:
+        - currency
+        - address
+        - amount
+        - confirmations
+        - txid
+        - timestamp
+        - status
+    lendingHistory:
+      properties:
+        id:
+          type: integer
+          example: 175589553,
+        currency:
+          type: string
+          example: BTC
+        rate:
+          type: number
+          format: double
+          example: 0.00057400
+        amount:
+          type: number
+          format: double
+          example: 0.04374404
+        duration:
+          type: number
+          format: double
+          example: 0.47610000
+        interest:
+          type: number
+          format: double
+          example: 0.00001196
+        fee:
+          type: number
+          format: double
+          example: -0.00000179
+        earned:
+          type: number
+          format: double
+          example: 0.00001017
+        open:
+          type: string
+          format: date-time
+          example: 2016-09-28 06:47:26
+        close:
+          type: string
+          format: date-time
+          example: 2016-09-28 18:13:03
+      required:
+        - id
+        - currency
+        - rate
+        - amount
+        - duration
+        - interest
+        - fee
+        - earned
+        - open
+        - close
     loan:
       type: object
       properties:
@@ -196,6 +347,37 @@ components:
         - amount
         - rangeMin
         - rangeMax
+    loanOffer:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10595
+        rate:
+          type: number
+          format: double
+          example: 0.00020000
+        amount:
+          type: number
+          format: double
+          example: 3.00000000
+        duration:
+          type: integer
+          example: 2
+        autoRenew:
+          type: boolean
+          example: 1
+        date:
+          type: string
+          format: date-time
+          example: 2015-05-10 23:33:50
+      required:
+        - id:10595
+        - rate:"0.000
+        - amount:"3.0
+        - duration:2,
+        - autoRenew:1
+        - date:"2015-
     loanOrdersResult:
       type: object
       properties:
@@ -262,6 +444,29 @@ components:
         - isFrozen
         - high24hr
         - low24hr
+    order:
+      type: object
+      properties:
+        orderNumber:
+          type: integer
+          example: 120467
+        type:
+          type: string
+          enum:
+            - sell
+            - buy
+        rate:
+          type: number
+          format: double
+          example: 0.04
+        amount:
+          type: number
+          format: double
+          example: 100
+        total:
+          type: number
+          format: double
+          example: 4
     orderBookResult:
       type: object
       properties:
@@ -283,11 +488,86 @@ components:
           example: 0
         seq:
           type: integer
+    orderTrade:
+      type: object
+      properties:
+        globalTradeID:
+          type: integer
+          example: 20825863
+        tradeID: 
+          type: integer
+          example: 147142
+        currencyPair:
+          type: string
+          example: BTC_XVC
+        type:
+          type: string
+          enum:
+            - sell
+            - buy
+        rate:
+          type: number
+          format: double
+          example: 0.00018500
+        amount:
+          type: number
+          format: double
+          example: 455.34206390
+        total:
+          type: number
+          format: double
+          example: 0.08423828
+        fee:
+          type: number
+          format: double
+          example: 0.00200000
+        date:
+          type: string
+          format: date-time
+          example: 2016-03-14 01:04:36"
+    resultingTrade:
+      type: object
+      properties:
+        amount: 
+          type: number
+          format: double
+          example: 338.8732
+        date: 
+          type: string
+          format: date-time
+          example: 2014-10-18 23:03:21
+        rate: 
+          type: number
+          format: double
+          example: 0.00000173
+        total: 
+          type: number
+          format: double
+          example: 0.00058625
+        tradeID: 
+          type: integer
+          example: 16164
+        type: 
+          type: string
+          enum:
+            - buy
+            - sell
+      required:
+        - amount
+        - date
+        - rate
+        - total
+        - tradeID
+        - type
     returnBalancesResult:
       type: object
       additionalProperties:
         type: number
         format: double
+    returnCompleteBalancesResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/completeBalance'
     tickerResult:
       type: object
       additionalProperties:
@@ -330,11 +610,438 @@ components:
         - rate
         - amount
         - total
+    tradeHistory:
+      type: object
+      properties:
+        globalTradeID:
+          type: integer
+          example: 2036467
+        tradeID:
+          type: integer
+          example: 21387
+        date:
+          type: string
+          format: date-time
+          example: 2014-09-12T05:21:26.000Z
+        type:
+          type: string
+          enum:
+            - buy
+            - sell
+        rate:
+          type: number
+          format: double
+          example: 0.00008943
+        amount:
+          type: number
+          format: double
+          example: 1.2724118
+        total:
+          type: number
+          format: double
+          example: 0.00011379
+        fee:
+          type: number
+          format: double
+          example: 0.00200000
+        orderNumber:
+          type: integer
+          example: 34225313575
+        category:
+          type: string
+          enum: 
+            - exchange
+            - lending
+            - margin
+      required:
+        - globalTradeID
+        - tradeID
+        - date
+        - type
+        - rate
+        - amount
+        - total
+        - fee
+        - orderNumber
+        - category
     tradeHistoryResult:
       type: array
       items:
         $ref: '#/components/schemas/trade'
+    withdrawal:
+      type: object
+      properties:
+        withdrawalNumber:
+          type: integer
+          example: 134933
+        currency: 
+          type: string
+          example: BTC
+        address:
+          type: string
+          example: 1N2i5n8DwTGzUq2Vmn9TUL8J1vdr1XBDFg
+        amount:
+          type: number
+          format: double
+          example: 5.00010000
+        timestamp:
+          type: integer
+          example: 1399267904,
+        status:
+          type: string
+          example: COMPLETE':' 36e483efa6aff9fd53a235177579d98451c4eb237c210e66cd2b9a2d4a988f8e
+        ipAddress:
+          type: string
+      required:
+        - withdrawalNumber
+        - currency
+        - address
+        - amount
+        - timestamp
+        - status
+        - ipAddress
+    returnDepositAddressesResult:
+      type: object
+      additionalProperties:
+        type: string
+    generateNewAddressResult:
+      type: object
+      properties:
+        success:   
+          type: boolean
+          example: 1
+        response: 
+          type: string
+          example: CKXbbs8FAVbtEa397gJHSutmrdrBrhUMxe
+    returnDepositsWithdrawalsResult:
+      type: object
+      properties:
+        deposits: 
+          type: array
+          items:
+            $ref: '#/components/schemas/deposit'
+        withdrawals:
+          type: array
+          items:
+            $ref: '#/components/schemas/withdrawal'
+    returnOpenOrdersResult:
+      type: array
+      items:
+        $ref: '#/components/schemas/order'
+    returnOpenOrdersAllResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/returnOpenOrdersResult'
+    returnTradeHistoryResult:
+      type: array
+      items:
+        $ref: '#/components/schemas/tradeHistory'
+    returnTradeHistoryAllResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/returnTradeHistoryResult'
+    returnOrderTradesResult:
+      type: array
+      items:
+        $ref: '#/components/schemas/orderTrade'
+    buyResult:
+      type: object
+      properties:
+        orderNumber:
+          type: integer
+        resultingTrades:
+          type: object
+          items:
+            $ref: '#/components/schemas/resultingTrade'
+      required:
+        - orderNumber
+    sellResult:
+      type: object
+      properties:
+        orderNumber:
+          type: integer
+        resultingTrades:
+          type: object
+          items:
+            $ref: '#/components/schemas/resultingTrade'
+      required:
+        - orderNumber
+    cancelOrderResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: 1
+    moveOrderResult:
+      properties:
+        success:
+          type: boolean
+          example: 1
+        orderNumber:
+          type: integer
+          example: 239574176
+        resultingTrades:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/resultingTrade'
+      required:
+          - success
+          - orderNumber
+    withdrawResult:
+      type: object
+      properties:
+        response:
+          type: string
+          example: Withdrew 2398 NXT.
+      required:
+        - response
+    returnFeeInfoResult:
+      type: object
+      properties:
+        makerFee:
+          type: number
+          format: double
+          example: 0.00140000
+        takerFee:
+          type: number
+          format: double
+          example: 0.00240000
+        thirtyDayVolume:
+          type: number
+          format: double
+          example: 612.00248891
+        nextTier:
+          type: number
+          format: double
+          example: 1200.00000000
+    returnAvailableAccountBalancesResult:
+      type: object
+      properties:
+        exchange:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+        margin:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+        lending:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+    returnTradableBalancesResult:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: number
+          format: double
+    transferBalanceResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: 1
+        message:
+          type: string
+          example: Transferred 2 BTC from exchange to margin account.
+    returnMarginAccountSummaryResult:
+      type: object
+      properties:
+        totalValue: 
+          type: number
+          format: double
+          example: 0.00346561
+        pl: 
+          type: number
+          format: double
+          example: -0.00001220
+        lendingFees: 
+          type: number
+          format: double
+          example: 0.00000000
+        netValue: 
+          type: number
+          format: double
+          example: 0.00345341
+        totalBorrowedValue: 
+          type: number
+          format: double
+          example: 0.00123220
+        currentMargin: 
+          type: number
+          format: double
+          example: 2.80263755
+      required:
+        - totalValue
+        - pl
+        - lendingFees
+        - netValue
+        - totalBorrowedValue
+        - currentMargin
+    marginBuyResult:
+      type: object
+      properties:
+        success:
+         type: boolean
+         example: 1
+        message:
+          type: string
+          example: Margin order placed
+        orderNumber:
+          type: integer
+          example: 154407998
+        resultingTrades:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/resultingTrade'
+    marginSellResult:
+      type: object
+      properties:
+        success:
+         type: boolean
+         example: 1
+        message:
+          type: string
+          example: Margin order placed
+        orderNumber:
+          type: integer
+          example: 154407998
+        resultingTrades:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/resultingTrade'
+    getMarginPositionResult:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 40.94717831
+        total:
+          type: number
+          format: double
+          example: -0.09671314
+        basePrice:
+          type: number
+          format: double
+          example: 0.00236190
+        liquidationPrice:
+          type: number
+          format: double
+          example:  -1,
+        pl:
+          type: number
+          format: double
+          example: -0.00058655
+        lendingFees:
+          type: number
+          format: double
+          example: -0.00000038
+        type:
+          type: string
+          example: long
+    getMarginPositionAllResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/getMarginPositionResult'
+    closeMarginPositionResult:
+      type: object
+      properties:
+        success:
+         type: boolean
+         example: 1
+        message:
+          type: string
+          example: Margin order placed
+        orderNumber:
+          type: integer
+          example: 154407998
+        resultingTrades:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/resultingTrade'
+    createLoanOfferResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: 1
+        message:
+          type: string
+          example: Loan order placed.
+        orderID:
+          type: integer
+          example: 10590
+      required:
+        - success
+        - message
+        - orderID
+    cancelLoanOfferResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: 1
+        message:
+          type: string
+          example: "Loan offer canceled."
+      required:
+        - success
+        - message
+    returnOpenLoanOffersResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/loanOffer'
+    returnActiveLoansResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/loanOffer'
+    returnLendingHistoryResult:
+      type: array
+      items:
+        $ref: '#/components/schemas/lendingHistory'
+    toggleAutoRenewResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: 1
+        message:
+          type: boolean
+          example: 1
   parameters:
+    account:
+      name: account
+      in: query
+      schema:
+        type: string
+        enum:
+          - all
+    address:
+      name: address
+      in: query
+      description: Currency address
+      schema:
+        type: string
+    autoRenew:
+      name: autoRenew
+      in: query
+      schema:
+        type: integer
+        enum: 
+          - 0
+          - 1
+    amount:
+      name: amount
+      in: query
+      description: amount
+      schema:
+        type: number
+        format: double
     currency:
       name: currency
       description: a given currency (returnLoanOrders)
@@ -355,6 +1062,11 @@ components:
       schema:
         type: integer
         example: 10
+    duration:
+      name: duration
+      in: query
+      schema:
+        type: integer
     end:
       name: end
       in: query
@@ -363,6 +1075,44 @@ components:
         type: integer
         format: int64
         example: 1410158341
+    fromAccount:
+      name: fromAccount
+      in: query
+      schema:
+        type: string
+    key:
+      name: Key
+      in: header
+      description: Your API key
+      required: true
+      schema:
+        type: string
+    lendingRate:
+      name: lendingRate
+      in: query
+      description: lendingRate
+      schema:
+        type: number
+        format: double
+    limit:
+      name: limit
+      in: query
+      description: up to a maximum of 10,000
+      schema:
+        type: integer
+        minimum: 0
+        default: 10000
+    orderNumber:
+      name: orderNumber
+      in: query
+      description: a given order
+      schema:
+        type: integer
+    paymentId:
+      name: paymentId
+      in: query
+      schema:
+        type: string
     period:
       name: period
       in: query
@@ -390,6 +1140,11 @@ components:
           - returnChartData
           - returnCurrencies
           - returnLoanOrders
+    toAccount:
+      name: toAccount
+      in: query
+      schema:
+        type: string
     tradingApiCommand:
       name: command
       in: query
@@ -425,6 +1180,20 @@ components:
           - returnActiveLoans
           - returnLendingHistory
           - toggleAutoRenew
+    rate:
+      name: rate
+      in: query
+      description: rate
+      schema:
+        type: number
+        format: double
+    sign:
+      name: Sign
+      in: header
+      description: The query's POST data signed by your key's "secret" according to the HMAC-SHA512 method.
+      required: true
+      schema:
+        type: string
     start:
       name: start
       in: query
