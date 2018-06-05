@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
+using NJsonSchema;
+using NJsonSchema.CodeGeneration.CSharp;
 using NSwag;
 using NSwag.CodeGeneration.CSharp;
 
@@ -32,13 +35,27 @@ namespace CryptoSharp.ClientGenerator
                     ClassName = $"{exchangeSettings.ExchangeName}Client",
                     CSharpGeneratorSettings =
                     {
-                        Namespace = $"CryptoSharp.Client.Exchanges.{exchangeSettings.ExchangeName}"
+                        Namespace = $"CryptoSharp.Client.Exchanges.{exchangeSettings.ExchangeName}",
+                        SchemaType = SchemaType.OpenApi3,
+                        ClassStyle = CSharpClassStyle.Poco,
+                        
+                       
                     },
                     GenerateClientInterfaces = true,
+                    CodeGeneratorSettings = { SchemaType = SchemaType.OpenApi3},
+                    
                 };
+
+                
+
 
                 var generator = new SwaggerToCSharpClientGenerator(document, settings);
                 var code = generator.GenerateFile();
+
+                // hack to replace double by decimal
+                var regex = new Regex("\\sdouble\\s", RegexOptions.Multiline);
+
+                code = regex.Replace(code, " decimal ");
 
                 if (!Directory.Exists(_generatedDirectory))
                     Directory.CreateDirectory(_generatedDirectory);

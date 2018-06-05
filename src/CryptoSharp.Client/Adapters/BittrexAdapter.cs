@@ -33,7 +33,7 @@ namespace CrypTrend.Client.Adapters
             if (!result.Success)
                 throw new Exception(result.Message);
             
-            return new Core.Models.Ticker(Name, tradingPair, Convert.ToDecimal(result.Result.Ask), Convert.ToDecimal(result.Result.Bid), Convert.ToDecimal(result.Result.Last));
+            return new Core.Models.Ticker(Name, tradingPair, result.Result.Ask, result.Result.Bid, result.Result.Last);
         }
     }
 }

@@ -24,9 +24,9 @@ namespace CryptoSharp.Tests.Client.Clients
                     Message = "",
                     Result = new CryptoSharp.Client.Exchanges.Bittrex.Ticker()
                     {
-                        Ask = 0.12345678,
-                        Bid = 1.23456789,
-                        Last = 2.34567891,
+                        Ask = 0.12345678m,
+                        Bid = 1.23456789m,
+                        Last = 2.34567891m,
                     }
                 });
 
