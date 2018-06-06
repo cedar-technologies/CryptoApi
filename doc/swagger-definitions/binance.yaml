@@ -10,22 +10,32 @@ info:
 servers:
   - url: 'https://api.binance.com'
 tags:
-  - name: Public API Endpoints
-    description: Public information available without an API key
+  - name: General endpoints
+  - name: Market Data endpoints
 paths:
   /api/v1/ping:
     get:
       tags:
-        - Public API Endpoints
+        - General endpoints
       summary: Test connectivity to the Rest API.
       operationId: TestConnectivity
       responses:
         '200':
           description: ping response
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
   /api/v1/time:
     get:
       tags:
-        - Public API Endpoints
+        - General endpoints
       summary: Test connectivity to the Rest API and get the current server time.
       operationId: CheckServerTime
       responses:
@@ -35,10 +45,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/timeResponse'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
   /api/v1/exchangeInfo:
     get:
       tags:
-        - Public API Endpoints
+        - Market Data endpoints
       summary: Current exchange trading rules and symbol information.
       operationId: GetExchangeInformation
       responses:
@@ -48,7 +68,74 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/exchangeInformationResponse'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
+  /api/v1/depth:
+    get:
+      tags:
+        - Public API Endpoints
+      summary: Current exchange trading rules and symbol information.
+      operationId: GetOrderBook
+      parameters:
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        '200':
+          description: order book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderBookResponse'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
 components:
+  responses:
+    malformedRequests:
+      description: return codes are used for for malformed requests; the issue is on the sender's side
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
+    rateLimit:
+      description: return code is used when breaking a request rate limit.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
+    ipBanned:
+      description: return code is used when an IP has been auto-banned for continuing to send requests after receiving 429 codes.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
+    internalServerError:
+      description: return codes are used for internal errors; the issue is on Binance's side.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
+    timeout:
+      description: return code is used when the API successfully sent the message but not get a response within the timeout period. It is important to NOT treat this as a failure; the execution status is UNKNOWN and could have been a success.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponse'
   schemas:
     exchangeInformationResponse:
       type: object
@@ -75,6 +162,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/symbol'
+      required:
+        - timezone
+        - serverTime
+        - rateLimits
+        - exchangeFilters
+        - symbols
+    errorResponse:
+      type: object
+      properties:
+        code: 
+          type: integer
+          example: -1121,
+        msg:
+          type: string
+          example: Invalid symbol.
+      required:
+        - code
+        - msg
     filter:
       type: object
       properties:
@@ -88,6 +193,8 @@ components:
             - MAX_ALGO_ORDERS
       discriminator:
         propertyName: filterType
+      required:
+        - fitlerType
     PRICE_FILTER:
       description: The PRICE_FILTER defines the price rules for a symbol.
       allOf:
@@ -109,6 +216,10 @@ components:
               format: double
               description: defines the intervals that a price/stopPrice can be increased/decreased by.
               example: 0.00000100
+          required:
+            - minPrice
+            - maxPrice
+            - tickSize
     LOT_SIZE:
       description: The LOT_SIZE filter defines the quantity (aka 'Lots' in auction terms) rules for a symbol.
       allOf:
@@ -130,6 +241,10 @@ components:
               format: double
               description: defines the intervals that a quantity/icebergQty can be increased/decreased by.
               example: 0.00100000
+          required:
+            - minQty
+            - maxQty
+            - stepSize
     MIN_NOTIONAL:
       description: The MIN_NOTIONAL filter defines the minimum notional value allowed for an order on a symbol. An order's notional value is the price * quantity.
       allOf:
@@ -140,6 +255,8 @@ components:
               type: number
               format: double
               example: 0.00100000
+          required:
+            - minNotional
     MAX_NUM_ORDERS:
       description: The MAX_NUM_ORDERS filter defines the maximum number of orders an account is allowed to have open on a symbol. Note that both "algo" orders and normal orders are counted for this filter.
       allOf:
@@ -149,6 +266,8 @@ components:
             limit: 
               type: integer
               example: 25
+          required:
+            - limit
     MAX_ALGO_ORDERS:
       description: The MAX_ALGO_ORDERS filter defines the maximum number of "algo" orders an account is allowed to have open on a symbol. "Algo" orders are STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
       allOf:
@@ -158,6 +277,8 @@ components:
             limit: 
               type: integer
               example: 5
+          required:
+            - limit
     exchangeFilter:
       type: object
       properties:
@@ -168,6 +289,8 @@ components:
             - EXCHANGE_MAX_ALGO_ORDERS
       discriminator:
         propertyName: filterType
+      required:
+            - filterType
     EXCHANGE_MAX_NUM_ORDERS:
       description: The MAX_NUM_ORDERS filter defines the maximum number of orders an account is allowed to have open on the exchange. Note that both "algo" orders and normal orders are counted for this filter.
       allOf:
@@ -177,6 +300,8 @@ components:
             limit: 
               type: integer
               example: 1000
+          required:
+            - limit
     EXCHANGE_MAX_ALGO_ORDERS:
       description: The MAX_ALGO_ORDERS filter defines the maximum number of "algo" orders an account is allowed to have open on the exchange. "Algo" orders are STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
       allOf:
@@ -186,6 +311,8 @@ components:
             limit: 
               type: integer
               example: 200
+          required:
+            - limit
     symbol:
       type: object
       properties:
@@ -241,6 +368,16 @@ components:
               - $ref: '#/components/schemas/MAX_ALGO_ORDERS'
             discriminator:
               propertyName: filterType
+      required:
+        - symbol
+        - status
+        - baseAsset
+        - baseAssetPrecision
+        - quoteAsset
+        - quotePrecision
+        - orderTypes
+        - icebergAllowed 
+        - filters
     rateLimit:
       type: object
       properties:
@@ -258,6 +395,10 @@ components:
         limit: 
           type: integer
           example: 100000
+      required:
+        - rateLimitType
+        - interval
+        - limit
     timeResponse:
       type: object
       properties:
@@ -266,3 +407,26 @@ components:
           description: unix time in ms
       required:
         - serverTime
+    orderBookResponse:
+      type: object
+      properties:
+        lastUpdateId: 
+          type: integer
+          example: 1027024
+        bids:
+          type: array
+        asks:
+          type: array
+  parameters:
+    symbol:
+      name: symbol
+      in: query
+      schema:
+        type: string
+      required: true
+    limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        enum: [5, 10, 20, 50, 100, 500, 1000]
