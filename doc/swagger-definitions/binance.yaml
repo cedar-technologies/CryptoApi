@@ -1,0 +1,268 @@
+openapi: 3.0.0
+info:
+  description: |
+    [binance documentation on github](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md)
+  version: 1.0.0
+  title: Binance API
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: 'https://api.binance.com'
+tags:
+  - name: Public API Endpoints
+    description: Public information available without an API key
+paths:
+  /api/v1/ping:
+    get:
+      tags:
+        - Public API Endpoints
+      summary: Test connectivity to the Rest API.
+      operationId: TestConnectivity
+      responses:
+        '200':
+          description: ping response
+  /api/v1/time:
+    get:
+      tags:
+        - Public API Endpoints
+      summary: Test connectivity to the Rest API and get the current server time.
+      operationId: CheckServerTime
+      responses:
+        '200':
+          description: ping response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/timeResponse'
+  /api/v1/exchangeInfo:
+    get:
+      tags:
+        - Public API Endpoints
+      summary: Current exchange trading rules and symbol information.
+      operationId: GetExchangeInformation
+      responses:
+        '200':
+          description: exchange info response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/exchangeInformationResponse'
+components:
+  schemas:
+    exchangeInformationResponse:
+      type: object
+      properties:
+        timezone:
+          type: string
+          example: UTC
+        serverTime: 
+          type: integer
+          example: 1508631584636
+        rateLimits: 
+          type: array
+          items:
+            $ref: '#/components/schemas/rateLimit'
+        exchangeFilters:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/EXCHANGE_MAX_NUM_ORDERS'
+              - $ref: '#/components/schemas/EXCHANGE_MAX_ALGO_ORDERS'
+            discriminator:
+              propertyName: filterType
+        symbols:
+          type: array
+          items:
+            $ref: '#/components/schemas/symbol'
+    filter:
+      type: object
+      properties:
+        filterType:
+          type: string
+          enum:
+            - PRICE_FILTER
+            - LOT_SIZE
+            - MIN_NOTIONAL
+            - MAX_NUM_ORDERS
+            - MAX_ALGO_ORDERS
+      discriminator:
+        propertyName: filterType
+    PRICE_FILTER:
+      description: The PRICE_FILTER defines the price rules for a symbol.
+      allOf:
+        - $ref: '#/components/schemas/filter'
+        - type: object
+          properties:
+            minPrice:
+              type: number
+              format: double
+              description: defines the minimum price/stopPrice allowed.
+              example: 0.00000100
+            maxPrice:
+              type: number
+              format: double
+              description: defines the maximum price/stopPrice allowed.
+              example: 100000.00000000
+            tickSize:
+              type: number
+              format: double
+              description: defines the intervals that a price/stopPrice can be increased/decreased by.
+              example: 0.00000100
+    LOT_SIZE:
+      description: The LOT_SIZE filter defines the quantity (aka 'Lots' in auction terms) rules for a symbol.
+      allOf:
+        - $ref: '#/components/schemas/filter'
+        - type: object
+          properties:
+            minQty:   
+              type: number
+              format: double
+              description: defines the minimum quantity/icebergQty allowed.
+              example: 0.00100000
+            maxQty:   
+              type: number
+              format: double
+              description: defines the maximum quantity/icebergQty allowed.
+              example: 100000.00000000
+            stepSize: 
+              type: number
+              format: double
+              description: defines the intervals that a quantity/icebergQty can be increased/decreased by.
+              example: 0.00100000
+    MIN_NOTIONAL:
+      description: The MIN_NOTIONAL filter defines the minimum notional value allowed for an order on a symbol. An order's notional value is the price * quantity.
+      allOf:
+        - $ref: '#/components/schemas/filter'
+        - type: object
+          properties:
+            minNotional: 
+              type: number
+              format: double
+              example: 0.00100000
+    MAX_NUM_ORDERS:
+      description: The MAX_NUM_ORDERS filter defines the maximum number of orders an account is allowed to have open on a symbol. Note that both "algo" orders and normal orders are counted for this filter.
+      allOf:
+        - $ref: '#/components/schemas/filter'
+        - type: object
+          properties:
+            limit: 
+              type: integer
+              example: 25
+    MAX_ALGO_ORDERS:
+      description: The MAX_ALGO_ORDERS filter defines the maximum number of "algo" orders an account is allowed to have open on a symbol. "Algo" orders are STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
+      allOf:
+        - $ref: '#/components/schemas/filter'
+        - type: object
+          properties:
+            limit: 
+              type: integer
+              example: 5
+    exchangeFilter:
+      type: object
+      properties:
+        filterType:
+          type: string
+          enum:
+            - EXCHANGE_MAX_NUM_ORDERS
+            - EXCHANGE_MAX_ALGO_ORDERS
+      discriminator:
+        propertyName: filterType
+    EXCHANGE_MAX_NUM_ORDERS:
+      description: The MAX_NUM_ORDERS filter defines the maximum number of orders an account is allowed to have open on the exchange. Note that both "algo" orders and normal orders are counted for this filter.
+      allOf:
+        - $ref: '#/components/schemas/exchangeFilter'
+        - type: object
+          properties:
+            limit: 
+              type: integer
+              example: 1000
+    EXCHANGE_MAX_ALGO_ORDERS:
+      description: The MAX_ALGO_ORDERS filter defines the maximum number of "algo" orders an account is allowed to have open on the exchange. "Algo" orders are STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
+      allOf:
+        - $ref: '#/components/schemas/exchangeFilter'
+        - type: object
+          properties:
+            limit: 
+              type: integer
+              example: 200
+    symbol:
+      type: object
+      properties:
+        symbol: 
+          type: string
+          example: ETHBTC
+        status:
+          type: string
+          enum:
+            - PRE_TRADING
+            - TRADING
+            - POST_TRADING
+            - END_OF_DAY
+            - HALT
+            - AUCTION_MATCH
+            - BREAK
+        baseAsset:
+          type: string
+          example: ETH
+        baseAssetPrecision: 
+          type: integer
+          example: 8
+        quoteAsset:
+          type: string
+          example: BTC,
+        quotePrecision:
+          type: integer
+          example: 8
+        orderTypes:
+          type: array
+          items:
+            type: string
+            enum:
+              - LIMIT
+              - MARKET
+              - STOP_LOSS
+              - STOP_LOSS_LIMIT
+              - TAKE_PROFIT
+              - TAKE_PROFIT_LIMIT
+              - LIMIT_MAKER
+        icebergAllowed: 
+          type: boolean
+        filters:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/PRICE_FILTER'
+              - $ref: '#/components/schemas/LOT_SIZE'
+              - $ref: '#/components/schemas/MIN_NOTIONAL'
+              - $ref: '#/components/schemas/MAX_NUM_ORDERS'
+              - $ref: '#/components/schemas/MAX_ALGO_ORDERS'
+              - $ref: '#/components/schemas/MAX_ALGO_ORDERS'
+              - $ref: '#/components/schemas/MAX_ALGO_ORDERS'
+            discriminator:
+              propertyName: filterType
+    rateLimit:
+      type: object
+      properties:
+        rateLimitType:
+          type: string
+          enum:
+            - REQUESTS
+            - ORDERS
+        interval: 
+          type: string
+          enum:
+            - SECOND
+            - MINUTE
+            - DAY
+        limit: 
+          type: integer
+          example: 100000
+    timeResponse:
+      type: object
+      properties:
+        serverTime:
+          type: integer
+          description: unix time in ms
+      required:
+        - serverTime
