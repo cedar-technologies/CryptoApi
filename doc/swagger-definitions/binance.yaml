@@ -22,15 +22,15 @@ paths:
       responses:
         '200':
           description: ping response
-        '429':
-          $ref: '#/components/responses/rateLimit'
         '418':
           $ref: '#/components/responses/ipBanned'
-        '4XX':
-          $ref: '#/components/responses/malformedRequests'
+        '429':
+          $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        '5XX':
+        4XX:
+          $ref: '#/components/responses/malformedRequests'
+        5XX:
           $ref: '#/components/responses/internalServerError'
   /api/v1/time:
     get:
@@ -45,15 +45,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/timeResponse'
-        '429':
-          $ref: '#/components/responses/rateLimit'
         '418':
           $ref: '#/components/responses/ipBanned'
-        '4XX':
-          $ref: '#/components/responses/malformedRequests'
+        '429':
+          $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        '5XX':
+        4XX:
+          $ref: '#/components/responses/malformedRequests'
+        5XX:
           $ref: '#/components/responses/internalServerError'
   /api/v1/exchangeInfo:
     get:
@@ -68,15 +68,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/exchangeInformationResponse'
-        '429':
-          $ref: '#/components/responses/rateLimit'
         '418':
           $ref: '#/components/responses/ipBanned'
-        '4XX':
-          $ref: '#/components/responses/malformedRequests'
+        '429':
+          $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        '5XX':
+        4XX:
+          $ref: '#/components/responses/malformedRequests'
+        5XX:
           $ref: '#/components/responses/internalServerError'
   /api/v1/depth:
     get:
@@ -94,15 +94,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/orderBookResponse'
-        '429':
-          $ref: '#/components/responses/rateLimit'
         '418':
           $ref: '#/components/responses/ipBanned'
-        '4XX':
-          $ref: '#/components/responses/malformedRequests'
+        '429':
+          $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        '5XX':
+        4XX:
+          $ref: '#/components/responses/malformedRequests'
+        5XX:
           $ref: '#/components/responses/internalServerError'
 components:
   responses:
@@ -143,10 +143,10 @@ components:
         timezone:
           type: string
           example: UTC
-        serverTime: 
+        serverTime:
           type: integer
           example: 1508631584636
-        rateLimits: 
+        rateLimits:
           type: array
           items:
             $ref: '#/components/schemas/rateLimit'
@@ -171,9 +171,9 @@ components:
     errorResponse:
       type: object
       properties:
-        code: 
+        code:
           type: integer
-          example: -1121,
+          example: '-1121,'
         msg:
           type: string
           example: Invalid symbol.
@@ -205,17 +205,17 @@ components:
               type: number
               format: double
               description: defines the minimum price/stopPrice allowed.
-              example: 0.00000100
+              example: 0.000001
             maxPrice:
               type: number
               format: double
               description: defines the maximum price/stopPrice allowed.
-              example: 100000.00000000
+              example: 100000
             tickSize:
               type: number
               format: double
               description: defines the intervals that a price/stopPrice can be increased/decreased by.
-              example: 0.00000100
+              example: 0.000001
           required:
             - minPrice
             - maxPrice
@@ -226,21 +226,21 @@ components:
         - $ref: '#/components/schemas/filter'
         - type: object
           properties:
-            minQty:   
+            minQty:
               type: number
               format: double
               description: defines the minimum quantity/icebergQty allowed.
-              example: 0.00100000
-            maxQty:   
+              example: 0.001
+            maxQty:
               type: number
               format: double
               description: defines the maximum quantity/icebergQty allowed.
-              example: 100000.00000000
-            stepSize: 
+              example: 100000
+            stepSize:
               type: number
               format: double
               description: defines the intervals that a quantity/icebergQty can be increased/decreased by.
-              example: 0.00100000
+              example: 0.001
           required:
             - minQty
             - maxQty
@@ -251,10 +251,10 @@ components:
         - $ref: '#/components/schemas/filter'
         - type: object
           properties:
-            minNotional: 
+            minNotional:
               type: number
               format: double
-              example: 0.00100000
+              example: 0.001
           required:
             - minNotional
     MAX_NUM_ORDERS:
@@ -263,18 +263,18 @@ components:
         - $ref: '#/components/schemas/filter'
         - type: object
           properties:
-            limit: 
+            limit:
               type: integer
               example: 25
           required:
             - limit
     MAX_ALGO_ORDERS:
-      description: The MAX_ALGO_ORDERS filter defines the maximum number of "algo" orders an account is allowed to have open on a symbol. "Algo" orders are STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
+      description: 'The MAX_ALGO_ORDERS filter defines the maximum number of "algo" orders an account is allowed to have open on a symbol. "Algo" orders are STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.'
       allOf:
         - $ref: '#/components/schemas/filter'
         - type: object
           properties:
-            limit: 
+            limit:
               type: integer
               example: 5
           required:
@@ -290,25 +290,25 @@ components:
       discriminator:
         propertyName: filterType
       required:
-            - filterType
+        - filterType
     EXCHANGE_MAX_NUM_ORDERS:
       description: The MAX_NUM_ORDERS filter defines the maximum number of orders an account is allowed to have open on the exchange. Note that both "algo" orders and normal orders are counted for this filter.
       allOf:
         - $ref: '#/components/schemas/exchangeFilter'
         - type: object
           properties:
-            limit: 
+            limit:
               type: integer
               example: 1000
           required:
             - limit
     EXCHANGE_MAX_ALGO_ORDERS:
-      description: The MAX_ALGO_ORDERS filter defines the maximum number of "algo" orders an account is allowed to have open on the exchange. "Algo" orders are STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
+      description: 'The MAX_ALGO_ORDERS filter defines the maximum number of "algo" orders an account is allowed to have open on the exchange. "Algo" orders are STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.'
       allOf:
         - $ref: '#/components/schemas/exchangeFilter'
         - type: object
           properties:
-            limit: 
+            limit:
               type: integer
               example: 200
           required:
@@ -316,7 +316,7 @@ components:
     symbol:
       type: object
       properties:
-        symbol: 
+        symbol:
           type: string
           example: ETHBTC
         status:
@@ -332,12 +332,12 @@ components:
         baseAsset:
           type: string
           example: ETH
-        baseAssetPrecision: 
+        baseAssetPrecision:
           type: integer
           example: 8
         quoteAsset:
           type: string
-          example: BTC,
+          example: 'BTC,'
         quotePrecision:
           type: integer
           example: 8
@@ -353,7 +353,7 @@ components:
               - TAKE_PROFIT
               - TAKE_PROFIT_LIMIT
               - LIMIT_MAKER
-        icebergAllowed: 
+        icebergAllowed:
           type: boolean
         filters:
           type: array
@@ -376,7 +376,7 @@ components:
         - quoteAsset
         - quotePrecision
         - orderTypes
-        - icebergAllowed 
+        - icebergAllowed
         - filters
     rateLimit:
       type: object
@@ -386,13 +386,13 @@ components:
           enum:
             - REQUESTS
             - ORDERS
-        interval: 
+        interval:
           type: string
           enum:
             - SECOND
             - MINUTE
             - DAY
-        limit: 
+        limit:
           type: integer
           example: 100000
       required:
@@ -410,13 +410,27 @@ components:
     orderBookResponse:
       type: object
       properties:
-        lastUpdateId: 
+        lastUpdateId:
           type: integer
           example: 1027024
         bids:
           type: array
+          items:
+            oneOf:
+              - type: number
+                format: double
+              - type: array
+          minItems: 2
+          maxItems: 3
         asks:
           type: array
+          items:
+            oneOf:
+              - type: number
+                format: double
+              - type: array
+            minItems: 2
+            maxItems: 3
   parameters:
     symbol:
       name: symbol
@@ -429,4 +443,11 @@ components:
       in: query
       schema:
         type: integer
-        enum: [5, 10, 20, 50, 100, 500, 1000]
+        enum:
+          - 5
+          - 10
+          - 20
+          - 50
+          - 100
+          - 500
+          - 1000
