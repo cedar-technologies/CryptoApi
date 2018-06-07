@@ -189,6 +189,36 @@ paths:
           $ref: '#/components/responses/malformedRequests'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /api/v1/ticker/24hr:
+    get:
+      tags:
+        - Public API Endpoints
+      summary: 24hr ticker price change statistics.
+      description: |
+        24 hour price change statistics. Careful when accessing this with no symbol.
+        Weight: 1 for a single symbol; number of symbols that are TRADING / 2 when the symbol parameter is omitted
+      operationId: TickerPriceChange24
+      parameters:
+        - $ref: '#/components/parameters/symbolOptional'
+      responses:
+        '200':
+          description: trade list
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/priceChangeStatistics'
+                  - $ref: '#/components/schemas/priceChangeStatisticsList'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        4XX:
+          $ref: '#/components/responses/malformedRequests'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
 components:
   responses:
     malformedRequests:
@@ -412,6 +442,130 @@ components:
               example: 200
           required:
             - limit
+    priceChangeStatisticsList:
+      type: array
+      items:
+        $ref: '#/components/schemas/priceChangeStatistics' 
+    priceChangeStatistics:
+      properties:
+        symbol:
+          type: string
+          example: BNBBTC
+        priceChange:
+          type: number
+          format: float
+          example: -94.99999800
+        priceChangePercent:
+          type: number
+          format: float
+          example: -95.960
+        weightedAvgPrice:
+          type: number
+          format: float
+          example: 0.29628482
+        prevClosePrice:
+          type: number
+          format: float
+          example: 0.10002000
+        lastPrice:
+          type: number
+          format: float
+          example: 4.00000200
+        lastQty:
+          type: number
+          format: float
+          example: 200.00000000
+        bidPrice:
+          type: number
+          format: float
+          example: 4.00000000
+        askPrice:
+          type: number
+          format: float
+          example: 4.00000200
+        openPrice:
+          type: number
+          format: float
+          example: 99.00000000
+        highPrice:
+          type: number
+          format: float
+          example: 100.00000000
+        lowPrice:
+          type: number
+          format: float
+          example: 0.10000000
+        volume:
+          type: number
+          format: float
+          example: 8913.30000000
+        quoteVolume:
+          type: number
+          format: float
+          example: 15.30000000
+        openTime:
+          type: number
+          format: float
+          example: 1499783499040
+        closeTime:
+          type: number
+          format: float
+          example: 1499869899040
+        fristId:
+          type: integer
+          format: int64
+          description: First tradeId
+          example: 28385
+        lastId:
+          type: integer
+          format: int64
+          description: Last tradeId
+          example: 28460 
+        count:
+          type: integer
+          description: Trade count
+          example: 76
+      required:
+        - symbol
+        - priceChange
+        - priceChangePercent
+        - weightedAvgPrice
+        - prevClosePrice
+        - lastPrice
+        - lastQty
+        - bidPrice
+        - askPrice
+        - openPrice
+        - highPrice
+        - lowPrice
+        - volume
+        - quoteVolume
+        - openTime
+        - closeTime
+        - fristId
+        - lastId
+        - count
+    rateLimit:
+      type: object
+      properties:
+        rateLimitType:
+          type: string
+          enum:
+            - REQUESTS
+            - ORDERS
+        interval:
+          type: string
+          enum:
+            - SECOND
+            - MINUTE
+            - DAY
+        limit:
+          type: integer
+          example: 100000
+      required:
+        - rateLimitType
+        - interval
+        - limit
     symbol:
       type: object
       properties:
@@ -477,27 +631,6 @@ components:
         - orderTypes
         - icebergAllowed
         - filters
-    rateLimit:
-      type: object
-      properties:
-        rateLimitType:
-          type: string
-          enum:
-            - REQUESTS
-            - ORDERS
-        interval:
-          type: string
-          enum:
-            - SECOND
-            - MINUTE
-            - DAY
-        limit:
-          type: integer
-          example: 100000
-      required:
-        - rateLimitType
-        - interval
-        - limit
     timeResponse:
       type: object
       properties:
@@ -617,6 +750,11 @@ components:
       schema:
         type: string
       required: true
+    symbolOptional:
+      name: symbol
+      in: query
+      schema:
+        type: string
     startTime:
       name: startTime
       in: query
