@@ -219,7 +219,7 @@ paths:
           $ref: '#/components/responses/malformedRequests'
         5XX:
           $ref: '#/components/responses/internalServerError'
-  /api/v1/depth:
+  /api/v3/ticker/price:
     get:
       tags:
         - Public API Endpoints
@@ -233,7 +233,36 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/orderBookResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/tickerPrice'
+                  - $ref: '#/components/schemas/tickerPriceList'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        4XX:
+          $ref: '#/components/responses/malformedRequests'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /api/v3/ticker/bookTicker:
+    get:
+      tags:
+        - Public API Endpoints
+      summary: Symbol order book ticker.
+      operationId: GetSymbolOrderBookTicker
+      parameters:
+        - $ref: '#/components/parameters/symbolOptional'
+      responses:
+        '200':
+          description: order book ticker
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/orderBookTicker'
+                  - $ref: '#/components/schemas/orderBookTickerList'
         '418':
           $ref: '#/components/responses/ipBanned'
         '429':
@@ -467,6 +496,63 @@ components:
               example: 200
           required:
             - limit
+    orderBookResponse:
+      type: object
+      properties:
+        lastUpdateId:
+          type: integer
+          format: int64
+          example: 1027024
+        bids:
+          type: array
+          items:
+            oneOf:
+              - type: number
+                format: double
+              - type: array
+          minItems: 2
+          maxItems: 3
+        asks:
+          type: array
+          items:
+            oneOf:
+              - type: number
+                format: double
+              - type: array
+            minItems: 2
+            maxItems: 3
+    orderBookTicker:
+      type: object
+      properties:
+        symbol: 
+          type: string
+          example: LTCBTC
+        bidPrice:
+          type: number
+          format: double
+          example: 4.00000000
+        bidQty:
+          type: number
+          format: double
+          example: 431.00000000
+        askPrice:
+          type: number
+          format: double
+          example: 4.00000200
+        askQty:
+          type: number
+          format: double
+          example: 9.00000000
+      required:
+        - symbol
+        - bidPrice
+        - bidQty
+        - askPrice
+        - askQty
+    orderBookTickerList:
+      type: array
+      items:
+        $ref: '#/components/schema/orderBookTicker'
     priceChangeStatisticsList:
       type: array
       items:
@@ -705,32 +791,7 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/trade'
-    orderBookResponse:
-      type: object
-      properties:
-        lastUpdateId:
-          type: integer
-          format: int64
-          example: 1027024
-        bids:
-          type: array
-          items:
-            oneOf:
-              - type: number
-                format: double
-              - type: array
-          minItems: 2
-          maxItems: 3
-        asks:
-          type: array
-          items:
-            oneOf:
-              - type: number
-                format: double
-              - type: array
-            minItems: 2
-            maxItems: 3
-  parameters:
+parameters:
     fromId:
       name: fromId
       in: query
