@@ -219,6 +219,31 @@ paths:
           $ref: '#/components/responses/malformedRequests'
         5XX:
           $ref: '#/components/responses/internalServerError'
+  /api/v1/depth:
+    get:
+      tags:
+        - Public API Endpoints
+      summary: Latest price for a symbol or symbols.
+      operationId: GetSymbolPriceTicker
+      parameters:
+        - $ref: '#/components/parameters/symbolOptional'
+      responses:
+        '200':
+          description: price ticker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderBookResponse'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        4XX:
+          $ref: '#/components/responses/malformedRequests'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
 components:
   responses:
     malformedRequests:
@@ -631,6 +656,19 @@ components:
         - orderTypes
         - icebergAllowed
         - filters
+    tickerPrice:
+      properties:
+        symbol:
+          type: string
+          example: LTCBTC
+        price:
+          type: number
+          format: double
+          example: 1.23452456
+    tickerPriceList:
+      type: array
+      items:
+        $ref: '#/components/schemas/tickerPrice' 
     timeResponse:
       type: object
       properties:
