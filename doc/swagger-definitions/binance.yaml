@@ -12,6 +12,7 @@ servers:
 tags:
   - name: General endpoints
   - name: Market Data endpoints
+  - name: Account endpoints
 paths:
   /api/v1/ping:
     get:
@@ -28,9 +29,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v1/time:
     get:
@@ -51,9 +52,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v1/exchangeInfo:
     get:
@@ -74,9 +75,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v1/depth:
     get:
@@ -100,9 +101,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v1/trades:
     get:
@@ -126,9 +127,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v1/historicalTrades:
     get:
@@ -153,9 +154,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v1/klines:
     get:
@@ -185,9 +186,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v1/ticker/24hr:
     get:
@@ -215,9 +216,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v3/ticker/price:
     get:
@@ -242,9 +243,9 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v3/ticker/bookTicker:
     get:
@@ -269,9 +270,121 @@ paths:
           $ref: '#/components/responses/rateLimit'
         '504':
           $ref: '#/components/responses/timeout'
-        4XX:
+        '4XX':
           $ref: '#/components/responses/malformedRequests'
-        5XX:
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
+  /api/v3/order:
+    get:
+      tags:
+        - Account endpoints
+      summary: Get order details.
+      operationId: GetOrderDetails
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/orderId'
+        - $ref: '#/components/parameters/origClientOrderId'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: order book ticker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderDetail'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
+    post:
+      tags:
+        - Account endpoints
+      summary: Send in a new order..
+      operationId: PostNewOrder
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/side'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/timeInForce'
+        - $ref: '#/components/parameters/quantity'
+        - $ref: '#/components/parameters/price'
+        - $ref: '#/components/parameters/newClientOrderId'
+        - $ref: '#/components/parameters/stopPrice'
+        - $ref: '#/components/parameters/icebergQty'
+        - $ref: '#/components/parameters/newOrderRespType'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: order book ticker
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/sendOrderACK'
+                  - $ref: '#/components/schemas/sendOrderRESULT'
+                  - $ref: '#/components/schemas/sendOrderFULL'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
+  /api/v3/order/test:
+    post:
+      tags:
+        - Account endpoints
+      summary: TEST Send in a new order..
+      operationId: TestPostNewOrder
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/side'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/timeInForce'
+        - $ref: '#/components/parameters/quantity'
+        - $ref: '#/components/parameters/price'
+        - $ref: '#/components/parameters/newClientOrderId'
+        - $ref: '#/components/parameters/stopPrice'
+        - $ref: '#/components/parameters/icebergQty'
+        - $ref: '#/components/parameters/newOrderRespType'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: order book ticker
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/sendOrderACK'
+                  - $ref: '#/components/schemas/sendOrderRESULT'
+                  - $ref: '#/components/schemas/sendOrderFULL'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
           $ref: '#/components/responses/internalServerError'
 components:
   responses:
@@ -553,6 +666,31 @@ components:
       type: array
       items:
         $ref: '#/components/schema/orderBookTicker'
+    orderDetail:
+      type: object
+    orderFill:
+      type: object
+      properties:
+        price:
+          type: number
+          format: double
+          example: 4000.00000000
+        qty: 
+          type: number
+          format: double
+          example: 1.00000000
+        commission:
+          type: number
+          format: double
+          example: 4.00000000
+        commissionAsset:
+          type: string
+          example: USDT
+      required:
+        - price
+        - qty
+        - commission
+        - commissionAsset
     priceChangeStatisticsList:
       type: array
       items:
@@ -742,6 +880,92 @@ components:
         - orderTypes
         - icebergAllowed
         - filters
+    sendOrderACK:
+      properties:
+        symbol:
+          type: string
+          example: BTCUSDT
+        orderId:
+          type: integer
+          format: int64 
+          example: 28
+        clientOrderId:
+          type: string
+          example: 6gCrw2kRUAF9CvJDGP16IP
+        transactTime: 
+          type: integer
+          format: double
+          example: 1507725176595
+      required:
+        - symbol
+        - orderId
+        - clientOrderId
+        - transaction
+    sendOrderRESULT:
+      allOf:
+        - $ref: '#/components/schemas/sendOrderACK'
+        - type: object
+          properties:
+            price:
+              type: number
+              format: double
+              example: 0.00000000
+            origQty:
+              type: number
+              format: double
+              example: 10.00000000",
+            executedQty:
+              type: number
+              format: double
+              example: 10.00000000",
+            status:
+              type: string
+              enum:
+                - NEW
+                - PARTIALLY_FILLED
+                - FILLED
+                - CANCELED
+                - PENDING_CANCEL
+                - REJECTED
+                - EXPIRED
+            timeInForce:
+              type: string
+              enum:
+                - GTC
+            type:
+              type: string
+              enum:
+                - LIMIT
+                - MARKET
+                - STOP_LOSS
+                - STOP_LOSS_LIMIT
+                - TAKE_PROFIT
+                - TAKE_PROFIT_LIMIT
+                - LIMIT_MAKER
+            side:
+              type: string
+              enum:
+                - SELL
+                - BUY
+          required:
+            - price
+            - origQty
+            - executedQty
+            - status
+            - timeInForce
+            - type
+            - side
+    sendOrderFULL:
+      allOf:
+        - $ref: '#/components/schemas/sendOrderRESULT'
+        - type: object
+          properties:
+            fills:
+              type: array
+              itmes:
+                $ref: '#/components/schemas/orderFill'
+          required:
+            - fills
     tickerPrice:
       properties:
         symbol:
@@ -792,6 +1016,12 @@ components:
       items:
         $ref: '#/components/schemas/trade'
 parameters:
+    endTime:
+      name: endTime
+      in: query
+      schema:
+        type: integer
+        format: int64
     fromId:
       name: fromId
       in: query
@@ -799,6 +1029,13 @@ parameters:
       schema:
         type: integer
         format: int64
+    icebergQty:
+      name: icebergQty
+      in: query
+      description: Used with LIMIT, STOP_LOSS_LIMIT, and TAKE_PROFIT_LIMIT to create an iceberg order.
+      schema:
+        type: number
+        format: double
     itemLimit:
       name: limit
       in: query
@@ -843,12 +1080,68 @@ parameters:
           - 100
           - 500
           - 1000
+    newClientOrderId:
+      name: newClientOrderId
+      in: query
+      description: A unique id for the order. Automatically generated if not sent.
+      schema:
+        type: string
+    newOrderRespType:
+      name: newOrderRespType
+      in: query
+      description: Set the response JSON. ACK, RESULT, or FULL; default: RESULT.
+      schema:
+        type: string
+        enum:
+          - ACK
+          - RESULT
+          - FULL
+    orderId:
+      name: orderId
+      in: query
+      schema:
+        type: integer
+        format: int64
+    origClientOrderId:
+      name: origClientOrderId
+      in: query
+      schema:
+        type: strign
+    price:
+      name: price
+      required: true
+      in: query
+      schema:
+        type: number
+        format: double
+    quantity:
+      name: quantity
+      in: query
+      required: true
+      schema:
+        type: number
+        format: double
+    recvWindow:
+      name: recvWindow
+      in: query
+      schema:
+        type: integer
+        format: int64
     symbol:
       name: symbol
       in: query
       schema:
         type: string
       required: true
+    side:
+      name: side
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - BUY
+          - SELL
     symbolOptional:
       name: symbol
       in: query
@@ -860,9 +1153,49 @@ parameters:
       schema:
         type: integer
         format: int64
-    endTime:
-      name: endTime
+    stopPrice:
+      name: stopPrice
       in: query
+      description: Used with STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
+      schema:
+        type: number
+        format: double
+    signature:
+      name: signature
+      in: query
+      schema:
+        type:    
+    type:
+      name: type
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+          - LIMIT
+          - MARKET
+          - STOP_LOSS
+          - STOP_LOSS_LIMIT
+          - TAKE_PROFIT
+          - TAKE_PROFIT_LIMIT
+          - LIMIT_MAKER
+    timeInForce:
+      name: timeInForce
+      in: query
+      schema:
+        type: string
+        enum:
+          - GTC
+    timestamp:
+      name: timestamp
+      in: query
+      required: true
       schema:
         type: integer
         format: int64
+    X-MBX-APIKEY:
+      name: X-MBX-APIKEY
+      in: header
+      required: true
+      schema:
+        type: string
