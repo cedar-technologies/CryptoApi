@@ -112,7 +112,7 @@ paths:
       operationId: GetRecentTradesList
       parameters:
         - $ref: '#/components/parameters/symbol'
-        - $ref: '#/components/parameters/getTradeLimit'
+        - $ref: '#/components/parameters/itemLimit'
       responses:
         '200':
           description: trade list
@@ -138,7 +138,7 @@ paths:
       operationId: GetHistoricalTradesList
       parameters:
         - $ref: '#/components/parameters/symbol'
-        - $ref: '#/components/parameters/getTradeLimit'
+        - $ref: '#/components/parameters/itemLimit'
         - $ref: '#/components/parameters/fromId'
       responses:
         '200':
@@ -162,19 +162,23 @@ paths:
       tags:
         - Public API Endpoints
       summary: Kline/Candlestick data.
-      description: Kline/candlestick bars for a symbol. Klines are uniquely identified by their open time.
+      description: |
+        Kline/candlestick bars for a symbol. Klines are uniquely identified by their open time.
+        If startTime and endTime are not sent, the most recent klines are returned.
       operationId: GetCandlestickData
       parameters:
         - $ref: '#/components/parameters/symbol'
-        - $ref: '#/components/parameters/getTradeLimit'
-        - $ref: '#/components/parameters/fromId'
+        - $ref: '#/components/parameters/interval'
+        - $ref: '#/components/parameters/itemLimit'
+        - $ref: '#/components/parameters/startTime'
+        - $ref: '#/components/parameters/endTime'
       responses:
         '200':
           description: trade list
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/tradesListResponse'
+                $ref: '#/components/schemas/candlestickResponse'
         '418':
           $ref: '#/components/responses/ipBanned'
         '429':
@@ -218,6 +222,19 @@ components:
           schema:
             $ref: '#/components/schemas/errorResponse'
   schemas:
+    candlestickResponse:
+      type: array
+      items:
+        type: array
+        items:
+          oneOf:
+            - type: integer
+              format: int64
+            - type: number
+              format: double
+            - type: integer
+        minItems: 12
+        maxItems: 12
     exchangeInformationResponse:
       type: object
       properties:
@@ -543,12 +560,44 @@ components:
             minItems: 2
             maxItems: 3
   parameters:
-    symbol:
-      name: symbol
+    fromId:
+      name: fromId
       in: query
+      description: TradeId to fetch from. Default gets most recent trades.
+      schema:
+        type: integer
+        format: int64
+    itemLimit:
+      name: limit
+      in: query
+      description: Default 500; max 500.
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 500
+        default: 500
+    interval:
+      name: inteval
+      in: query
+      required: true
       schema:
         type: string
-      required: true
+        enum:
+          - 1m
+          - 3m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 2h
+          - 4h
+          - 6h
+          - 8h
+          - 12h
+          - 1d
+          - 3d
+          - 1w
+          - 1M
     limit:
       name: limit
       in: query
@@ -562,20 +611,21 @@ components:
           - 100
           - 500
           - 1000
-    getTradeLimit:
-      name: limit
+    symbol:
+      name: symbol
       in: query
-      description: Default 500; max 500.
       schema:
-        type: integer
-        minimum: 0
-        maximum: 500
-        default: 500
-    fromId:
-      name: fromId
+        type: string
+      required: true
+    startTime:
+      name: startTime
       in: query
-      description: TradeId to fetch from. Default gets most recent trades.
       schema:
         type: integer
         format: int64
-     
+    endTime:
+      name: endTime
+      in: query
+      schema:
+        type: integer
+        format: int64
