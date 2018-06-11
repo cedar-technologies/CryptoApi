@@ -275,6 +275,36 @@ paths:
         '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v3/order:
+    get:
+      tags:
+        - Account endpoints
+      summary: Get order details.
+      operationId: GetOrderDetails
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/orderId'
+        - $ref: '#/components/parameters/origClientOrderId'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: order book ticker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderDetail'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
     post:
       tags:
         - Account endpoints
@@ -636,6 +666,80 @@ components:
               - type: array
             minItems: 2
             maxItems: 3
+    orderDetail:
+      type: object
+      properties:
+        symbol
+          type: string
+          example: LTCBTC
+        orderId:
+          type: integer
+          format: int64
+          example: 1
+        clientOrderId
+          type: string
+          example: myOrder1
+        price:
+          type: number
+          format: double
+          example: 0.1
+        origQty:
+          type: number
+          format: double
+          example: 1.0
+        executedQty:
+          type: number
+          format: double
+          example: 0.0
+        status": "NEW",
+        timeInForce:
+          type: string
+          enum:
+            - GTC
+        type:
+          type: string
+          enum:
+            - LIMIT
+            - MARKET
+            - STOP_LOSS
+            - STOP_LOSS_LIMIT
+            - TAKE_PROFIT
+            - TAKE_PROFIT_LIMIT
+            - LIMIT_MAKER
+        side:
+          type: string
+          enum:
+            - SELL
+            - BUY
+        stopPrice:
+          type: number
+          format: double
+          example: 0.0
+        icebergQty:
+          type: number
+          format: double
+          example: 0.0
+        time:
+          type: integer
+          format: int64
+          example: 1499827319559
+        isWorking:
+          type: boolean
+      required:
+        - symbol
+        - orderId
+        - clientOrderId
+        - price
+        - origQty
+        - executedQty
+        - status
+        - timeInForce
+        - type
+        - side
+        - stopPrice
+        - icebergQty
+        - time
+        - isWorking
     orderFill:
       type: object
       properties:
