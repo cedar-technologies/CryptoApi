@@ -446,6 +446,37 @@ paths:
           $ref: '#/components/responses/malformedRequests'
         '5XX':
           $ref: '#/components/responses/internalServerError'
+  /api/v3/allOrders:
+    get:
+      tags:
+        - Account endpoints
+      summary: Get all account orders; active, canceled, or filled.
+      operationId: GetOrders
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/orderId'
+        - $ref: '#/components/parameters/itemLimit'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: A list of orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderDetailList'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
 components:
   responses:
     malformedRequests:
