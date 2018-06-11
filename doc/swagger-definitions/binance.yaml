@@ -345,6 +345,37 @@ paths:
           $ref: '#/components/responses/malformedRequests'
         '5XX':
           $ref: '#/components/responses/internalServerError'
+    delete:
+      tags:
+        - Account endpoints
+      summary: Send in a new order..
+      operationId: CancelOrder
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/orderId'
+        - $ref: '#/components/parameters/origClientOrderId'
+        - $ref: '#/components/parameters/newClientOrderId'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: order book ticker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/deleteOrderResponse'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
   /api/v3/order/test:
     post:
       tags:
@@ -464,6 +495,27 @@ components:
             - type: integer
         minItems: 12
         maxItems: 12
+    deleteOrderResponse:
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: LTCBTC
+        origClientOrderId: 
+          type: string
+          example: myOrder1
+        orderId: 
+          type: integer
+          format: int64
+          example: 1
+        clientOrderId:
+          type: string 
+          example: cancelMyOrder1
+      required:
+        - symbol
+        - origClientOrderId
+        - orderId
+        - clientOrderId
     exchangeInformationResponse:
       type: object
       properties:
