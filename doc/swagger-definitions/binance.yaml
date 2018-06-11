@@ -290,7 +290,7 @@ paths:
         - $ref: '#/components/parameters/timestamp'
       responses:
         '200':
-          description: order book ticker
+          description: an order
           content:
             application/json:
               schema:
@@ -348,7 +348,7 @@ paths:
     delete:
       tags:
         - Account endpoints
-      summary: Send in a new order..
+      summary: Cancel an active order.
       operationId: CancelOrder
       parameters:
         - $ref: '#/components/parameters/X-MBX-APIKEY'
@@ -407,6 +407,35 @@ paths:
                   - $ref: '#/components/schemas/sendOrderACK'
                   - $ref: '#/components/schemas/sendOrderRESULT'
                   - $ref: '#/components/schemas/sendOrderFULL'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
+  /api/v3/openOrders:
+    get:
+      tags:
+        - Account endpoints
+      summary: Get open order
+      operationId: GetOpenOrders
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: A list of orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderDetailList'
         '418':
           $ref: '#/components/responses/ipBanned'
         '429':
@@ -801,6 +830,10 @@ components:
         - icebergQty
         - time
         - isWorking
+    orderDetailList:
+      type: array
+      items:
+        $ref: '#/components/schemas/orderDetail'
     orderFill:
       type: object
       properties:
