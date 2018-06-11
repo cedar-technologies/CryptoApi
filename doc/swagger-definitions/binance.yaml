@@ -505,6 +505,37 @@ paths:
           $ref: '#/components/responses/malformedRequests'
         '5XX':
           $ref: '#/components/responses/internalServerError'
+  /api/v3/myTrades:
+    get:
+      tags:
+        - Account endpoints
+      summary: Get trades for a specific account and symbol.
+      operationId: GetMyTrades
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/symbol'
+        - $ref: '#/components/parameters/itemLimit'
+        - $ref: '#/components/parameters/fromId'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: A list of orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tradeV3List'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
 components:
   responses:
     malformedRequests:
@@ -1297,6 +1328,57 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/trade'
+    tradeV3:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 28457
+        orderId:
+          type: integer
+          format: int64
+          example: 100235
+        price:
+          type: number
+          format: double
+          example: 4.00000100
+        qty:
+          type: number
+          format: double
+          example: 12.00000000
+        commission:
+          type: number
+          format: double
+          example: 10.10000000
+        commissionAsset:
+          type: string
+          example: BNB
+        time:
+          type: integer
+          format: int64
+          example: 1499865549590
+        isBuyer:
+          type: boolean
+        isMaker:
+          type: boolean
+        isBestMatch:
+          type: boolean
+      required:
+        - id
+        - orderId
+        - price
+        - qty
+        - commission
+        - commissionAsset
+        - time
+        - isBuyer
+        - isMaker
+        - isBestMatch
+    tradeV3List:
+      type: array
+      items:
+        $ref: '#/components/schemas/tradeV3'
   parameters:
     endTime:
       name: endTime
