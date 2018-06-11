@@ -669,14 +669,14 @@ components:
     orderDetail:
       type: object
       properties:
-        symbol
+        symbol:
           type: string
           example: LTCBTC
         orderId:
           type: integer
           format: int64
           example: 1
-        clientOrderId
+        clientOrderId:
           type: string
           example: myOrder1
         price:
@@ -691,7 +691,16 @@ components:
           type: number
           format: double
           example: 0.0
-        status": "NEW",
+        status:
+          type: string
+          enum:
+            - PRE_TRADING
+            - TRADING
+            - POST_TRADING
+            - END_OF_DAY
+            - HALT
+            - AUCTION_MATCH
+            - BREAK
         timeInForce:
           type: string
           enum:
