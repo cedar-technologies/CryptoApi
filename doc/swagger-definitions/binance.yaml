@@ -477,6 +477,34 @@ paths:
           $ref: '#/components/responses/malformedRequests'
         '5XX':
           $ref: '#/components/responses/internalServerError'
+  /api/v3/account:
+    get:
+      tags:
+        - Account endpoints
+      summary: Get current account information.
+      operationId: GetAccountDetail
+      parameters:
+        - $ref: '#/components/parameters/X-MBX-APIKEY'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/recvWindow'
+        - $ref: '#/components/parameters/timestamp'
+      responses:
+        '200':
+          description: A list of orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountDetail'
+        '418':
+          $ref: '#/components/responses/ipBanned'
+        '429':
+          $ref: '#/components/responses/rateLimit'
+        '504':
+          $ref: '#/components/responses/timeout'
+        '4XX':
+          $ref: '#/components/responses/malformedRequests'
+        '5XX':
+          $ref: '#/components/responses/internalServerError'
 components:
   responses:
     malformedRequests:
@@ -510,6 +538,63 @@ components:
           schema:
             $ref: '#/components/schemas/errorResponse'
   schemas:
+    accountDetail:
+      type: object
+      properties:
+        makerCommission: 
+          type: integer
+          example: 15
+        takerCommission: 
+          type: integer
+          example: 15
+        buyerCommission: 
+          type: integer
+          example: 0
+        sellerCommission: 
+          type: integer
+          example: 0
+        canTrade:
+          type: boolean
+        canWithdraw:
+          type: boolean
+        canDeposit:
+          type: boolean
+        updateTime: 
+          type: integer
+          format: int64
+          example: 123456789
+        balances:
+          type: array
+          items:
+            $ref: '#/components/schemas/balance'
+      required:
+        - makerCommission
+        - takerCommission
+        - buyerCommission
+        - sellerCommission
+        - canTrade
+        - canWithdraw
+        - canDeposit
+        - updateTime
+        - balances
+    balance:
+      type: object
+      properties:
+        asset:
+          type: string
+          example: LTC
+        free:
+          type: number
+          format: double
+          example: 4763368.68006011
+        locked:
+          type: number
+          format: double
+          example: 0.00000000
+      required:
+        - asset
+        - free
+        - locked
     bookTicker:
       type: object
       properties:
