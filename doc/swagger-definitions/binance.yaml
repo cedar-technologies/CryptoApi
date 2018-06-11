@@ -252,7 +252,7 @@ paths:
       tags:
         - Public API Endpoints
       summary: Symbol order book ticker.
-      operationId: GetSymbolOrderBookTicker
+      operationId: GetOrderBookTicker
       parameters:
         - $ref: '#/components/parameters/symbolOptional'
       responses:
@@ -262,8 +262,8 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/orderBookTicker'
-                  - $ref: '#/components/schemas/orderBookTickerList'
+                  - $ref: '#/components/schemas/bookTicker'
+                  - $ref: '#/components/schemas/bookTickerList'
         '418':
           $ref: '#/components/responses/ipBanned'
         '429':
@@ -275,36 +275,6 @@ paths:
         '5XX':
           $ref: '#/components/responses/internalServerError'
   /api/v3/order:
-    get:
-      tags:
-        - Account endpoints
-      summary: Get order details.
-      operationId: GetOrderDetails
-      parameters:
-        - $ref: '#/components/parameters/X-MBX-APIKEY'
-        - $ref: '#/components/parameters/signature'
-        - $ref: '#/components/parameters/symbol'
-        - $ref: '#/components/parameters/orderId'
-        - $ref: '#/components/parameters/origClientOrderId'
-        - $ref: '#/components/parameters/recvWindow'
-        - $ref: '#/components/parameters/timestamp'
-      responses:
-        '200':
-          description: order book ticker
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/orderDetail'
-        '418':
-          $ref: '#/components/responses/ipBanned'
-        '429':
-          $ref: '#/components/responses/rateLimit'
-        '504':
-          $ref: '#/components/responses/timeout'
-        '4XX':
-          $ref: '#/components/responses/malformedRequests'
-        '5XX':
-          $ref: '#/components/responses/internalServerError'
     post:
       tags:
         - Account endpoints
@@ -419,6 +389,38 @@ components:
           schema:
             $ref: '#/components/schemas/errorResponse'
   schemas:
+    bookTicker:
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: LTCBTC,
+        bidPrice:
+          type: number
+          format: double
+          example: 4.00000000
+        bidQty:
+          type: number
+          format: double
+          example: 431.00000000",
+        askPrice:
+          type: number
+          format: double
+          example: 4.00000200",
+        askQty:
+          type: number
+          format: double
+          example: 9.00000000"
+      required:
+        - symbol
+        - bidPrice
+        - bidQty
+        - askPrice
+        - askQty
+    bookTickerList:
+      type: array
+      items:
+        $ref: '#/components/schemas/bookTicker'
     candlestickResponse:
       type: array
       items:
@@ -634,40 +636,6 @@ components:
               - type: array
             minItems: 2
             maxItems: 3
-    orderBookTicker:
-      type: object
-      properties:
-        symbol: 
-          type: string
-          example: LTCBTC
-        bidPrice:
-          type: number
-          format: double
-          example: 4.00000000
-        bidQty:
-          type: number
-          format: double
-          example: 431.00000000
-        askPrice:
-          type: number
-          format: double
-          example: 4.00000200
-        askQty:
-          type: number
-          format: double
-          example: 9.00000000
-      required:
-        - symbol
-        - bidPrice
-        - bidQty
-        - askPrice
-        - askQty
-    orderBookTickerList:
-      type: array
-      items:
-        $ref: '#/components/schema/orderBookTicker'
-    orderDetail:
-      type: object
     orderFill:
       type: object
       properties:
@@ -959,13 +927,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/sendOrderRESULT'
         - type: object
+          required:
+            - fills
           properties:
             fills:
               type: array
-              itmes:
+              items:
                 $ref: '#/components/schemas/orderFill'
-          required:
-            - fills
     tickerPrice:
       properties:
         symbol:
@@ -1015,7 +983,7 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/trade'
-parameters:
+  parameters:
     endTime:
       name: endTime
       in: query
@@ -1089,7 +1057,7 @@ parameters:
     newOrderRespType:
       name: newOrderRespType
       in: query
-      description: Set the response JSON. ACK, RESULT, or FULL; default: RESULT.
+      description: Set the response JSON. ACK, RESULT, or FULL default':' RESULT.
       schema:
         type: string
         enum:
@@ -1106,7 +1074,7 @@ parameters:
       name: origClientOrderId
       in: query
       schema:
-        type: strign
+        type: string
     price:
       name: price
       required: true
@@ -1164,7 +1132,7 @@ parameters:
       name: signature
       in: query
       schema:
-        type:    
+        type: string  
     type:
       name: type
       in: query
