@@ -61,6 +61,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/orderBookResponse'
+  /v2/transactions/{currency_pair}:
+    get:
+      tags:
+        - PUBLIC DATA FUNCTIONS
+      summary: Get Order book data
+      operationId: GetTransactions
+      description: |
+        Returns a descending list of transactions.
+      parameters:
+        - $ref: '#/components/parameters/currencyPair'
+        - $ref: '#/components/parameters/time'
+      responses:
+        '200':
+          description: ticker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transactionList'
 components:
   schemas:
     bid:
@@ -133,6 +151,38 @@ components:
         - ask
         - timestamp
         - open
+    transactionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/transaction'
+    transaction:
+      properties:
+        date:
+          type: integer
+          format: int64
+          description: Unix timestamp date and time.
+        tid:
+          type: integer
+          format: int64
+          description: Transaction ID.
+        price:
+          type: number
+          format: double
+          description: BTC price.
+        amount:
+          type: number
+          format: double
+          description: BTC amount.
+        type:
+          type: integer
+          minimum: 0
+          maximum: 1
+      required:
+        - date
+        - tid
+        - price
+        - amount
+        - type
   parameters:
     currencyPair:
       in: path
@@ -141,3 +191,12 @@ components:
       schema:
         type: string
         description: Supported values for currency_pair':' btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc, ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc
+    time:
+      in: query
+      name: time
+      schema:
+        type: string
+        enum:
+          - minute
+          - hour
+          - day
