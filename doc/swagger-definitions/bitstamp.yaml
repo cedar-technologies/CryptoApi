@@ -16,8 +16,8 @@ paths:
     get:
       tags:
         - PUBLIC DATA FUNCTIONS
-      summary: Supported values for currency_pair':' btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc, ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc
-      operationId: GetTickers
+      summary: Get Ticker Data
+      operationId: GetTicker
       parameters:
         - $ref: '#/components/parameters/currencyPair'
       responses:
@@ -27,8 +27,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ticker'
+  /v2/ticker_hour/{currency_pair}:
+    get:
+      tags:
+        - PUBLIC DATA FUNCTIONS
+      summary: Get Hourly Ticker Data
+      operationId: GetHourlyTickerList
+      description: |
+        Returns a JSON dictionary like the ticker call, with the calculated values being from within an hour.
+      parameters:
+        - $ref: '#/components/parameters/currencyPair'
+      responses:
+        '200':
+          description: ticker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ticker'
+  /v2/order_book/{currency_pair}:
+    get:
+      tags:
+        - PUBLIC DATA FUNCTIONS
+      summary: Get Order book data
+      operationId: GetOrderBook
+      description: |
+        Returns a JSON dictionary with "bids" and "asks". Each is a list of open orders and each order is represented as a list holding the price and the amount.
+      parameters:
+        - $ref: '#/components/parameters/currencyPair'
+      responses:
+        '200':
+          description: ticker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderBookResponse'
 components:
   schemas:
+    bid:
+      type: array
+      items:
+        type: number
+        format: double
+      minItems: 2
+      maxItems: 2
+    orderBookResponse:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          example: 1529360859
+        bids:
+          type: array
+          items:
+            $ref: '#/components/schemas/bid' 
+      required:
+        - timestamp
+        - bids
     ticker:
       type: object
       properties:
@@ -85,4 +140,4 @@ components:
       required: true
       schema:
         type: string
-        description: btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc, ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc
+        description: Supported values for currency_pair':' btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc, ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc
