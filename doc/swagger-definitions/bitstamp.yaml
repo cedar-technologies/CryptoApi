@@ -56,7 +56,7 @@ paths:
         - $ref: '#/components/parameters/currencyPair'
       responses:
         '200':
-          description: ticker
+          description: orbder book list
           content:
             application/json:
               schema:
@@ -65,7 +65,7 @@ paths:
     get:
       tags:
         - PUBLIC DATA FUNCTIONS
-      summary: Get Order book data
+      summary: Get Transactions data
       operationId: GetTransactions
       description: |
         Returns a descending list of transactions.
@@ -74,11 +74,26 @@ paths:
         - $ref: '#/components/parameters/time'
       responses:
         '200':
-          description: ticker
+          description: transaction list
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/transactionList'
+  /v2/trading-pairs-info:
+    get:
+      tags:
+        - PUBLIC DATA FUNCTIONS
+      summary: Get Trading Pairs Data
+      operationId: GetTradingPairs
+      description: |
+        Returns a list of trading pair info
+      responses:
+        '200':
+          description: trading pair list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tradingPairList'
 components:
   schemas:
     bid:
@@ -151,6 +166,44 @@ components:
         - ask
         - timestamp
         - open
+    tradingPairList:
+      type: array
+      items:
+        $ref: '#/components/schemas/tradingPair' 
+    tradingPair:
+      properties:
+        name:
+          type: string
+          description: Trading pair.
+        url_symbol:
+          type: string
+          description: URL symbol of trading pair.
+        base_decimals:
+          type: integer
+          description: Decimal precision for base currency (BTC/USD - base':' BTC).
+        counter_decimals:
+          type: integer
+          description: Decimal precision for counter currency (BTC/USD - counter':' USD).
+        minimum_order:
+          type: string
+          description: Minimum order size.
+        trading:
+          type: string
+          enum:
+            - Enabled
+            - Disabled
+          description: Trading engine status (Enabled/Disabled).
+        description:
+          type: string
+          description: Trading pair description.
+      required:
+        - name
+        - url_symbol
+        - base_decimals
+        - counter_decimals
+        - minimum_order
+        - trading
+        - description
     transactionList:
       type: array
       items:
