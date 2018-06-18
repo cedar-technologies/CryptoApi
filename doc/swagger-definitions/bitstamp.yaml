@@ -1,1 +1,88 @@
-
+openapi: 3.0.0
+info:
+  description: |
+    [binance documentation on github](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md)
+  version: 1.0.0
+  title: Bitstamp API
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: 'https://www.bitstamp.net/api'
+tags:
+  - name: PUBLIC DATA FUNCTIONS
+paths:
+  /v2/ticker/{currency_pair}:
+    get:
+      tags:
+        - PUBLIC DATA FUNCTIONS
+      summary: Supported values for currency_pair':' btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc, ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc
+      operationId: GetTickers
+      parameters:
+        - $ref: '#/components/parameters/currencyPair'
+      responses:
+        '200':
+          description: ticker
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ticker'
+components:
+  schemas:
+    ticker:
+      type: object
+      properties:
+        last:
+          type: number
+          format: double
+          description:  Last BTC price.
+        high:
+          type: number
+          format: double
+          description:  Last 24 hours price high.
+        low:
+          type: number
+          format: double
+          description:  Last 24 hours price low.
+        vwap:
+          type: number
+          format: double
+          description:  Last 24 hours volume weighted average price.
+        volume:
+          type: number
+          format: double
+          description:  Last 24 hours volume.
+        bid:
+          type: number
+          format: double
+          description:  Highest buy order.
+        ask:
+          type: number
+          format: double
+          description:  Lowest sell order.
+        timestamp:
+          type: integer
+          format: in64
+          description:  Unix timestamp date and time.
+        open:
+          type: number
+          format: double
+          description:  First price of the day.
+      required:
+        - last
+        - high
+        - low
+        - vwap
+        - volume
+        - bid
+        - ask
+        - timestamp
+        - open
+  parameters:
+    currencyPair:
+      in: path
+      name: currency_pair
+      required: true
+      schema:
+        type: string
+        description: btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc, ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc
