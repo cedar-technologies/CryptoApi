@@ -11,6 +11,7 @@ servers:
   - url: 'https://www.bitstamp.net/api'
 tags:
   - name: PUBLIC DATA FUNCTIONS
+  - name: PRIVATE FUNCTIONS
 paths:
   '/v2/ticker/{currency_pair}':
     get:
@@ -79,7 +80,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/transactionList'
-  /v2/trading-pairs-info:
+  '/v2/trading-pairs-info':
     get:
       tags:
         - PUBLIC DATA FUNCTIONS
@@ -94,7 +95,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tradingPairList'
-  /eur_usd/:
+  '/eur_usd':
     get:
       tags:
         - PUBLIC DATA FUNCTIONS
@@ -109,8 +110,126 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/conversionRate'
+  '/v2/balance':
+    post:
+      tags:
+        - PRIVATE FUNCTIONS
+      summary: Returns all the balances.
+      operationId: GetBalances
+      description: |
+        Returns all the balances.
+      parameters:
+        - $ref: '#/components/parameters/key'
+        - $ref: '#/components/parameters/nonce'
+        - $ref: '#/components/parameters/signature'
+      responses:
+        '200':
+          description: all the balances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balance'
+  '/v2/balance/{currency_pair}':
+    post:
+      tags:
+        - PRIVATE FUNCTIONS
+      summary: Returns all the balances.
+      operationId: GetBalance
+      description: |
+        Returns all the balances.
+      parameters:
+        - $ref: '#/components/parameters/currencyPair'
+        - $ref: '#/components/parameters/key'
+        - $ref: '#/components/parameters/nonce'
+        - $ref: '#/components/parameters/signature'
+      responses:
+        '200':
+          description: values relevant to the specified currency_pair parameter.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balance'
 components:
   schemas:
+    balance:
+      type: object
+      properties:
+        usd_balance:
+          type: number
+          format: double
+          description: USD balance.
+        btc_balance:
+          type: number
+          format: double
+          description: BTC balance.
+        eur_balance:
+          type: number
+          format: double
+          description: EUR balance.
+        xrp_balance:
+          type: number
+          format: double
+          description: XRP balance.
+        usd_reserved:
+          type: number
+          format: double
+          description: USD reserved.
+        btc_reserved:
+          type: number
+          format: double
+          description: BTC reserved.
+        eur_reserved:
+          type: number
+          format: double
+          description: EUR reserved.
+        xrp_reserved:
+          type: number
+          format: double
+          description: XRP reserved.
+        usd_available:
+          type: number
+          format: double
+          description: USD available for trading.
+        btc_available:
+          type: number
+          format: double
+          description: BTC available for trading.
+        eur_available:
+          type: number
+          format: double
+          description: EUR available for trading.
+        xrp_available:
+          type: number
+          format: double
+          description: XRP available for trading.
+        btcusd_fee:
+          type: number
+          format: double
+          description: Customer BTC/USD trading fee.
+        btceur_fee:
+          type: number
+          format: double
+          description: Customer BTC/EUR trading fee.
+        eurusd_fee:
+          type: number
+          format: double
+          description: Customer EUR/USD trading fee.
+        xrpusd_fee:
+          type: number
+          format: double
+          description: Customer XRP/USD trading fee.
+        xrpeur_fee:
+          type: number
+          format: double
+          description: Customer XRP/EUR trading fee.
+        xrpbtc_fee:
+          type: number
+          format: double
+          description: Customer XRP/BTC trading fee.
+        fee:
+          type: number
+          format: double
+          description: Customer trading fee.
     bid:
       type: array
       items:
@@ -280,3 +399,22 @@ components:
           - minute
           - hour
           - day
+    key:
+      name: key
+      in: query
+      schema:
+        type: string
+        description: To get an API key, go to "Account", "Security" and then "API Access". Set permissions and click "Generate key".
+    nonce:
+      name: nonce
+      in: query
+      schema:
+        type: integer
+        format: int64
+        description: Nonce is a regular integer number. It must be increased with every request you make. Read more about it here. Example':' if you set nonce to 1 in your first request, you must set it to at least 2 in your second request. You are not required to start with 1. A common practice is to use unix time for that parameter.
+    signature:
+      name: signature
+      in: query
+      schema:
+        type: string
+        description: Signature is a HMAC-SHA256 encoded message containing nonce, customer ID (can be found here) and API key. The HMAC-SHA256 code must be generated using a secret key that was generated with your API key. This code must be converted to it's hexadecimal representation (64 uppercase characters).
