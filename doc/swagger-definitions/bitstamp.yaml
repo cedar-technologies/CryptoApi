@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: |
-    [binance documentation on github](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md)
+    [bitstamp documentation](https://www.bitstamp.net/api/)
   version: 1.0.0
   title: Bitstamp API
   license:
@@ -12,7 +12,7 @@ servers:
 tags:
   - name: PUBLIC DATA FUNCTIONS
 paths:
-  /v2/ticker/{currency_pair}:
+  '/v2/ticker/{currency_pair}':
     get:
       tags:
         - PUBLIC DATA FUNCTIONS
@@ -27,7 +27,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ticker'
-  /v2/ticker_hour/{currency_pair}:
+  '/v2/ticker_hour/{currency_pair}':
     get:
       tags:
         - PUBLIC DATA FUNCTIONS
@@ -44,7 +44,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ticker'
-  /v2/order_book/{currency_pair}:
+  '/v2/order_book/{currency_pair}':
     get:
       tags:
         - PUBLIC DATA FUNCTIONS
@@ -61,7 +61,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/orderBookResponse'
-  /v2/transactions/{currency_pair}:
+  '/v2/transactions/{currency_pair}':
     get:
       tags:
         - PUBLIC DATA FUNCTIONS
@@ -94,6 +94,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tradingPairList'
+  /eur_usd/:
+    get:
+      tags:
+        - PUBLIC DATA FUNCTIONS
+      summary: EUR/USD CONVERSION RATE
+      operationId: GetEurUseConversiontRates
+      description: |
+        Returns a list of trading pair info
+      responses:
+        '200':
+          description: conversion rates for buy and sell
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/conversionRate'
 components:
   schemas:
     bid:
@@ -103,6 +118,18 @@ components:
         format: double
       minItems: 2
       maxItems: 2
+    conversionRate:
+      type: object
+      properties:
+        buy:
+          type: number
+          format: double
+        sell:
+          type: number
+          format: double
+      required:
+        - buy
+        - sell
     orderBookResponse:
       type: object
       properties:
@@ -113,7 +140,7 @@ components:
         bids:
           type: array
           items:
-            $ref: '#/components/schemas/bid' 
+            $ref: '#/components/schemas/bid'
       required:
         - timestamp
         - bids
@@ -123,39 +150,39 @@ components:
         last:
           type: number
           format: double
-          description:  Last BTC price.
+          description: Last BTC price.
         high:
           type: number
           format: double
-          description:  Last 24 hours price high.
+          description: Last 24 hours price high.
         low:
           type: number
           format: double
-          description:  Last 24 hours price low.
+          description: Last 24 hours price low.
         vwap:
           type: number
           format: double
-          description:  Last 24 hours volume weighted average price.
+          description: Last 24 hours volume weighted average price.
         volume:
           type: number
           format: double
-          description:  Last 24 hours volume.
+          description: Last 24 hours volume.
         bid:
           type: number
           format: double
-          description:  Highest buy order.
+          description: Highest buy order.
         ask:
           type: number
           format: double
-          description:  Lowest sell order.
+          description: Lowest sell order.
         timestamp:
           type: integer
           format: in64
-          description:  Unix timestamp date and time.
+          description: Unix timestamp date and time.
         open:
           type: number
           format: double
-          description:  First price of the day.
+          description: First price of the day.
       required:
         - last
         - high
@@ -169,7 +196,7 @@ components:
     tradingPairList:
       type: array
       items:
-        $ref: '#/components/schemas/tradingPair' 
+        $ref: '#/components/schemas/tradingPair'
     tradingPair:
       properties:
         name:
@@ -180,10 +207,10 @@ components:
           description: URL symbol of trading pair.
         base_decimals:
           type: integer
-          description: Decimal precision for base currency (BTC/USD - base':' BTC).
+          description: 'Decimal precision for base currency (BTC/USD - base'':'' BTC).'
         counter_decimals:
           type: integer
-          description: Decimal precision for counter currency (BTC/USD - counter':' USD).
+          description: 'Decimal precision for counter currency (BTC/USD - counter'':'' USD).'
         minimum_order:
           type: string
           description: Minimum order size.
@@ -243,7 +270,7 @@ components:
       required: true
       schema:
         type: string
-        description: Supported values for currency_pair':' btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc, ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc
+        description: 'Supported values for currency_pair'':'' btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc, ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc'
     time:
       in: query
       name: time
