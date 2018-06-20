@@ -149,6 +149,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/balance'
+  '/v2/user_transactions':
+    post:
+      tags:
+        - PRIVATE FUNCTIONS
+      summary:  Returns a descending list of transactions.
+      operationId: GetTransactions
+      description: |
+        Returns all the balances.
+      parameters:
+        - $ref: '#/components/parameters/key'
+        - $ref: '#/components/parameters/nonce'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        '200':
+          description:  transactions, represented as dictionaries.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userTransactionList'
 components:
   schemas:
     balance:
@@ -382,6 +404,67 @@ components:
         - price
         - amount
         - type
+    userTransactionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/userTransaction'
+    userTransaction:
+      type: object
+      properties:
+        datetime:
+          type: string
+          format: date-time
+          description: Date and time.
+        id:
+          type: integer
+          format: int64
+          description: Transaction ID.
+        type:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 14
+          description: Transaction type':' 0 - deposit; 1 - withdrawal; 2 - market trade; 14 - sub account transfer.
+        usd:
+          type: number
+          format: double
+          description: USD amount.
+        eur:
+          type: number
+          format: double
+          description: (v2 calls only)  EUR amount.
+        btc:
+          type: number
+          format: double
+          description: BTC amount.
+        xrp:
+          type: number
+          format: double
+          description: (v2 calls only)  XRP amount.
+        btc_usd:
+          type: number
+          format: double
+          description: (or btc_eur if available)  Exchange rate.
+        fee:
+          type: number
+          format: double
+          description: Transaction fee.
+        order_id:
+          type: string
+          description: Executed order ID.
+      required:
+        - datetime
+        - id
+        - type
+        - usd
+        - eur
+        - btc
+        - xrp
+        - btc_usd
+        - fee
+        - order_id
   parameters:
     currencyPair:
       in: path
@@ -418,3 +501,27 @@ components:
       schema:
         type: string
         description: Signature is a HMAC-SHA256 encoded message containing nonce, customer ID (can be found here) and API key. The HMAC-SHA256 code must be generated using a secret key that was generated with your API key. This code must be converted to it's hexadecimal representation (64 uppercase characters).
+    offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        description: Skip that many transactions before returning results (default':' 0).
+        minimum: 0
+    limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        description: Limit result to that many transactions (default':' 100; maximum':' 1000).
+        minimum: 0
+        maximum: 1000
+    sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        description: Sorting by date and time':' asc - ascending; desc - descending (default':' desc).
